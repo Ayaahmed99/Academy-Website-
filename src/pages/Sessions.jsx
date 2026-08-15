@@ -21,7 +21,7 @@ const SESSIONS = [
     level: "Level 1 — Foundations",
     title: "Variables & output",
     blurb: "Storing data in variables, data types, getting input and printing output.",
-    recordingUrl: "https://drive.google.com/drive/folders/SESSION_2_RECORDING_ID",
+    recordingUrl: "https://drive.google.com/file/d/1v2ACkjzqxQP1M5JzBHgyUuORaO9VknMm/view?usp=drive_link",
   },
   {
     n: 3,
