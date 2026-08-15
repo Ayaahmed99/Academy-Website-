@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   X, ArrowRight, ArrowLeft, Check, Clock, Users, Wifi,
-  Send, Copy, RotateCcw, Mail, Loader2, AlertTriangle, Phone, Star,
+  Send, Copy, RotateCcw, Mail, Loader2, AlertTriangle, Phone, Star, Sparkles,
 } from "lucide-react";
 
 /* ============================================================================
@@ -349,8 +349,9 @@ function GlobalStyles() {
       .why-item p { margin-top: 6px; font-size: 14px; color: var(--ink-soft); }
 
       /* Promo band linking to Instructors / Apply pages */
-      .promo-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding-bottom: 70px; }
-      @media (max-width: 720px) { .promo-strip { grid-template-columns: 1fr; } }
+      .promo-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding-bottom: 70px; }
+      @media (max-width: 920px) { .promo-strip { grid-template-columns: 1fr 1fr; } }
+      @media (max-width: 620px) { .promo-strip { grid-template-columns: 1fr; } }
       .promo-card {
         background: var(--paper-raised); border: 1px solid var(--line); border-radius: 14px; padding: 26px;
         display: flex; flex-direction: column; gap: 12px; border-top: 3px solid var(--accent);
@@ -480,6 +481,56 @@ function GlobalStyles() {
       .review-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
       .review-name { font-weight: 600; font-size: 13.5px; }
       .review-text { font-size: 14px; color: var(--ink-soft); line-height: 1.5; }
+
+      /* ---------- LEVEL TEST PAGE ---------- */
+      .course-picker { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; padding-bottom: 44px; }
+      .course-chip {
+        display: flex; align-items: center; gap: 8px; background: var(--paper-raised); border: 1.5px solid var(--line);
+        padding: 10px 16px; border-radius: 100px; font-size: 14px; font-weight: 600;
+        transition: border-color 0.15s ease, transform 0.15s ease;
+      }
+      .course-chip:hover { transform: translateY(-1px); }
+      .course-chip.active { border-color: var(--chip-accent); background: color-mix(in srgb, var(--chip-accent) 8%, white); }
+      .chip-icon { font-size: 17px; }
+
+      .empty-state { text-align: center; padding: 60px 20px 80px; color: var(--ink-soft); font-size: 14.5px; }
+
+      .quiz-card {
+        background: var(--paper-raised); border: 1px solid var(--line); border-top: 3px solid var(--accent);
+        border-radius: 16px; padding: 30px 30px 34px; margin-bottom: 80px;
+      }
+      .quiz-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+      .text-btn {
+        background: none; border: none; color: var(--ink-soft); font-size: 13.5px; font-weight: 600;
+        display: flex; align-items: center; gap: 6px; padding: 4px 0;
+      }
+      .text-btn:hover { color: var(--ink); }
+      .quiz-count { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-soft); }
+
+      .progress-track { height: 6px; background: var(--line); border-radius: 100px; overflow: hidden; margin-bottom: 28px; }
+      .progress-fill { height: 100%; background: var(--accent); border-radius: 100px; transition: width 0.3s ease; }
+
+      .question { font-size: 21px; line-height: 1.35; margin-bottom: 22px; }
+
+      .options { display: flex; flex-direction: column; gap: 10px; }
+      .option-btn {
+        text-align: left; background: var(--paper); border: 1.5px solid var(--line); padding: 14px 16px;
+        border-radius: 10px; font-size: 14.5px; font-weight: 500; color: var(--ink);
+        transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+      }
+      .option-btn:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 6%, white); transform: translateX(2px); }
+
+      .result-head { display: flex; align-items: center; gap: 22px; margin-bottom: 18px; flex-wrap: wrap; }
+      .dial { flex-shrink: 0; }
+      .dial-fill { transition: stroke-dashoffset 0.6s ease; }
+      .dial-text { font-family: 'JetBrains Mono', monospace; font-size: 18px; fill: var(--ink); font-weight: 500; }
+      .result-eyebrow {
+        display: flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px;
+        text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft); margin-bottom: 6px;
+      }
+      .result-name { font-size: 24px; }
+      .result-blurb { color: var(--ink-soft); font-size: 15px; margin-bottom: 24px; }
+      .result-actions { display: flex; gap: 12px; flex-wrap: wrap; }
     `}</style>
   );
 }
@@ -492,6 +543,7 @@ function GlobalStyles() {
 const PAGES = [
   { id: "home", label: "Home" },
   { id: "instructors", label: "Instructors" },
+  { id: "level-test", label: "Find your level" },
   { id: "apply", label: "Apply to teach" },
 ];
 
@@ -530,6 +582,7 @@ function SiteFooter({ onNavigate }) {
       <div className="footer-links">
         <button onClick={() => onNavigate("home")}>Home</button>
         <button onClick={() => onNavigate("instructors")}>Instructors</button>
+        <button onClick={() => onNavigate("level-test")}>Find your level</button>
         <button onClick={() => onNavigate("apply")}>Apply to teach</button>
       </div>
     </footer>
@@ -739,7 +792,7 @@ function HomePage({ onNavigate }) {
             <button className="cta-btn" onClick={() => document.getElementById("courses")?.scrollIntoView({ behavior: "smooth" })}>
               Browse courses <ArrowRight size={16} />
             </button>
-            <button className="cta-secondary" onClick={() => onNavigate("instructors")}>Meet the instructors</button>
+            <button className="cta-secondary" onClick={() => onNavigate("level-test")}>Find your level</button>
           </div>
         </div>
         <Terminal />
@@ -790,9 +843,16 @@ function HomePage({ onNavigate }) {
 
       <section className="wrap">
         <div className="section-head">
-          <h2>Two more things to check out</h2>
+          <h2>A few more things to check out</h2>
         </div>
         <div className="promo-strip">
+          <div className="promo-card" style={{ "--accent": "var(--amber)" }}>
+            <h3>Not sure where to start?</h3>
+            <p>Take a 2-minute level check for any course and we'll tell you exactly where to begin.</p>
+            <button className="cta-btn outline" onClick={() => onNavigate("level-test")}>
+              Find your level <ArrowRight size={16} />
+            </button>
+          </div>
           <div className="promo-card" style={{ "--accent": "var(--periwinkle)" }}>
             <h3>Meet the instructors</h3>
             <p>See who's teaching each course, their ratings, and how parents describe working with them.</p>
@@ -1310,6 +1370,299 @@ function ApplyPage({ onNavigate }) {
 }
 
 /* ============================================================================
+   LEVEL TEST PAGE
+   ============================================================================ */
+
+const LEVEL_TEST_COURSES = [
+  { id: "ai", icon: "🤖", title: "AI & Smart Technology", accent: "var(--periwinkle)" },
+  { id: "python", icon: "🐍", title: "Programming & Python", accent: "var(--teal)" },
+  { id: "canva", icon: "🎨", title: "Canva & Creative Design", accent: "var(--coral)" },
+  { id: "english", icon: "🇬🇧", title: "English Communication", accent: "var(--amber)" },
+  { id: "scratch", icon: "🎮", title: "Scratch & Game Dev", accent: "var(--teal)" },
+];
+
+// Python maps to the real 4-level curriculum, scored out of 15.
+const PYTHON_QUIZ = {
+  max: 15,
+  questions: [
+    {
+      q: "Have you written any code before?",
+      options: [
+        { t: "Never", v: 0 },
+        { t: "A little, in block tools like Scratch", v: 1 },
+        { t: "Yes, simple Python scripts", v: 2 },
+        { t: "Yes, I'm comfortable with loops & functions", v: 3 },
+      ],
+    },
+    {
+      q: "What does a variable do?",
+      options: [
+        { t: "Not sure", v: 0 },
+        { t: "I have a vague idea", v: 1 },
+        { t: "It stores a value you can reuse", v: 2 },
+        { t: "I could explain it with an example", v: 3 },
+      ],
+    },
+    {
+      q: "Can you read simple if / else logic?",
+      options: [
+        { t: "No", v: 0 },
+        { t: "A little", v: 1 },
+        { t: "Yes, I can follow it", v: 2 },
+        { t: "Yes, and I can write it myself", v: 3 },
+      ],
+    },
+    {
+      q: "Have you used loops (for / while)?",
+      options: [
+        { t: "Never heard of them", v: 0 },
+        { t: "Heard of them", v: 1 },
+        { t: "Used them a bit", v: 2 },
+        { t: "Use them comfortably", v: 3 },
+      ],
+    },
+    {
+      q: "Have you built even a tiny project — a game, calculator, script?",
+      options: [
+        { t: "No", v: 0 },
+        { t: "Followed a tutorial", v: 1 },
+        { t: "Built something small on my own", v: 2 },
+        { t: "Built and debugged my own project", v: 3 },
+      ],
+    },
+  ],
+  levels: [
+    {
+      max: 3,
+      name: "Level 1 — Foundations",
+      blurb: "You're starting fresh, and that's exactly where this level begins.",
+      points: ["How programs think: logic & sequence", "Variables and data types", "Getting input, printing output"],
+    },
+    {
+      max: 7,
+      name: "Level 2 — Control Flow",
+      blurb: "You've got the basics. You'll move quickly into decisions and loops.",
+      points: ["If / else decisions", "For and while loops", "Debugging: reading error messages"],
+    },
+    {
+      max: 11,
+      name: "Level 3 — Data Structures",
+      blurb: "Solid fundamentals. You're ready to organize real data.",
+      points: ["Lists and indexing", "Dictionaries", "Combining data to model real things"],
+    },
+    {
+      max: 15,
+      name: "Level 4 — Build a Project",
+      blurb: "You already think like a programmer. Time to ship something.",
+      points: ["Writing functions", "Planning a mini project", "Ship it: a quiz game or calculator"],
+    },
+  ],
+};
+
+// Other courses aren't live yet, so this is a lighter readiness/curiosity check
+// scored out of 8, mapped to the three age tiers rather than curriculum levels.
+const READINESS_BANDS = [
+  { max: 3, name: "Explorer", blurb: "Perfect place to start — playful, visual, hands-on lessons." },
+  { max: 6, name: "Builder", blurb: "You've got a head start. Expect to move quickly into guided projects." },
+  { max: 8, name: "Creator", blurb: "You're ready to dive in — expect independent, project-driven work." },
+];
+
+const READINESS_QUIZZES = {
+  ai: [
+    { q: "Do you know what AI is used for?", options: [{ t: "Not really", v: 0 }, { t: "Heard of it, like chatbots", v: 1 }, { t: "Used AI tools before", v: 2 }] },
+    { q: "Are you comfortable trying new apps or tools on your own?", options: [{ t: "I need help", v: 0 }, { t: "Sometimes", v: 1 }, { t: "Yes, I explore on my own", v: 2 }] },
+    { q: "Are you curious about how computers make decisions?", options: [{ t: "Not sure", v: 0 }, { t: "A little curious", v: 1 }, { t: "Very curious, I ask a lot of questions", v: 2 }] },
+    { q: "Have you used a creative AI tool — image or chat — before?", options: [{ t: "No", v: 0 }, { t: "Once or twice", v: 1 }, { t: "Yes, a few times", v: 2 }] },
+  ],
+  canva: [
+    { q: "Have you ever made a poster, slide, or social post?", options: [{ t: "No", v: 0 }, { t: "For school, once", v: 1 }, { t: "Yes, a few times", v: 2 }] },
+    { q: "Are you comfortable picking colors and fonts that go together?", options: [{ t: "Not really", v: 0 }, { t: "A bit", v: 1 }, { t: "Yes", v: 2 }] },
+    { q: "Have you used Canva or a similar design app?", options: [{ t: "Never", v: 0 }, { t: "Tried it once", v: 1 }, { t: "Use it sometimes", v: 2 }] },
+    { q: "Do you enjoy drawing or arranging things visually?", options: [{ t: "Not much", v: 0 }, { t: "Sometimes", v: 1 }, { t: "Yes, I love it", v: 2 }] },
+  ],
+  english: [
+    { q: "How comfortable are you speaking English in a group?", options: [{ t: "Shy about it", v: 0 }, { t: "Okay with some practice", v: 1 }, { t: "Comfortable", v: 2 }] },
+    { q: "Do you read English books or shows without much help?", options: [{ t: "No", v: 0 }, { t: "Sometimes", v: 1 }, { t: "Yes", v: 2 }] },
+    { q: "Can you tell a short story out loud in English?", options: [{ t: "Hard for me", v: 0 }, { t: "With some effort", v: 1 }, { t: "Yes", v: 2 }] },
+    { q: "Have you given a presentation in English before?", options: [{ t: "No", v: 0 }, { t: "Once", v: 1 }, { t: "Yes, more than once", v: 2 }] },
+  ],
+  scratch: [
+    { q: "Have you used Scratch or a similar block-coding tool?", options: [{ t: "Never", v: 0 }, { t: "Once or twice", v: 1 }, { t: "Yes, made something", v: 2 }] },
+    { q: "Do you enjoy figuring out how games work?", options: [{ t: "Not really", v: 0 }, { t: "A bit", v: 1 }, { t: "Yes, a lot", v: 2 }] },
+    { q: "Are you comfortable with drag-and-drop and trial and error?", options: [{ t: "Not really", v: 0 }, { t: "Sometimes", v: 1 }, { t: "Yes", v: 2 }] },
+    { q: "Have you ever finished making something — a story, animation, or game?", options: [{ t: "No", v: 0 }, { t: "Started but didn't finish", v: 1 }, { t: "Yes, finished one", v: 2 }] },
+  ],
+};
+
+function getQuiz(courseId) {
+  if (courseId === "python") return { questions: PYTHON_QUIZ.questions, max: PYTHON_QUIZ.max };
+  return { questions: READINESS_QUIZZES[courseId], max: READINESS_QUIZZES[courseId].length * 2 };
+}
+
+function getResult(courseId, score) {
+  if (courseId === "python") {
+    return PYTHON_QUIZ.levels.find((l) => score <= l.max) || PYTHON_QUIZ.levels[PYTHON_QUIZ.levels.length - 1];
+  }
+  return READINESS_BANDS.find((b) => score <= b.max) || READINESS_BANDS[READINESS_BANDS.length - 1];
+}
+
+function ScoreDial({ percent, accent }) {
+  const r = 54;
+  const c = 2 * Math.PI * r;
+  const offset = c - (percent / 100) * c;
+  return (
+    <svg width="132" height="132" viewBox="0 0 132 132" className="dial">
+      <circle cx="66" cy="66" r={r} fill="none" stroke="var(--line)" strokeWidth="10" />
+      <circle
+        cx="66" cy="66" r={r} fill="none" stroke={accent} strokeWidth="10" strokeLinecap="round"
+        strokeDasharray={c} strokeDashoffset={offset} transform="rotate(-90 66 66)" className="dial-fill"
+      />
+      <text x="66" y="72" textAnchor="middle" className="dial-text">{percent}%</text>
+    </svg>
+  );
+}
+
+function QuizPanel({ course, onDone, onExit }) {
+  const quiz = useMemo(() => getQuiz(course.id), [course.id]);
+  const [step, setStep] = useState(0);
+  const [answers, setAnswers] = useState([]);
+
+  const question = quiz.questions[step];
+  const progress = Math.round((step / quiz.questions.length) * 100);
+
+  function choose(value) {
+    const next = [...answers, value];
+    if (step + 1 < quiz.questions.length) {
+      setAnswers(next);
+      setStep(step + 1);
+    } else {
+      const total = next.reduce((a, b) => a + b, 0);
+      onDone(total, quiz.max);
+    }
+  }
+
+  return (
+    <div className="quiz-card" style={{ "--accent": course.accent }}>
+      <div className="quiz-top">
+        <button className="text-btn" onClick={onExit}><ArrowLeft size={15} /> Change course</button>
+        <span className="quiz-count">Question {step + 1} of {quiz.questions.length}</span>
+      </div>
+      <div className="progress-track">
+        <div className="progress-fill" style={{ width: `${progress}%` }} />
+      </div>
+
+      <h3 className="question">{question.q}</h3>
+      <div className="options">
+        {question.options.map((opt, i) => (
+          <button className="option-btn" key={i} onClick={() => choose(opt.v)}>{opt.t}</button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ResultPanel({ course, score, max, onRetake, onExit }) {
+  const result = getResult(course.id, score);
+  const percent = Math.round((score / max) * 100);
+  const isPython = course.id === "python";
+
+  return (
+    <div className="quiz-card result-card" style={{ "--accent": course.accent }}>
+      <div className="quiz-top">
+        <button className="text-btn" onClick={onExit}><ArrowLeft size={15} /> Change course</button>
+      </div>
+
+      <div className="result-head">
+        <ScoreDial percent={percent} accent={course.accent} />
+        <div>
+          <span className="result-eyebrow"><Sparkles size={13} /> Your level</span>
+          <h2 className="result-name">{result.name}</h2>
+        </div>
+      </div>
+
+      <p className="result-blurb">{result.blurb}</p>
+
+      {isPython && (
+        <>
+          <h4 className="section-label">You'll start with</h4>
+          <ul className="preview-list">
+            {result.points.map((p, i) => (<li key={i}><span className="preview-dot" />{p}</li>))}
+          </ul>
+        </>
+      )}
+
+      <div className="result-actions">
+        <button className="cta-btn">Explore {course.title}</button>
+        <button className="cta-btn outline" onClick={onRetake}><RotateCcw size={15} /> Retake test</button>
+      </div>
+    </div>
+  );
+}
+
+function LevelTestPage({ onNavigate }) {
+  const [activeCourse, setActiveCourse] = useState(null);
+  const [result, setResult] = useState(null); // { score, max }
+
+  function selectCourse(course) {
+    setActiveCourse(course);
+    setResult(null);
+  }
+
+  return (
+    <>
+      <section className="wrap narrow intro">
+        <button className="back-link" onClick={() => onNavigate("home")}>
+          <ArrowLeft size={14} /> Back to home
+        </button>
+        <div style={{ marginTop: 22 }}>
+          <span className="eyebrow">2-minute check</span>
+          <h1>Find your level before you start</h1>
+          <p>Pick a course below and answer a few quick questions. We'll tell you exactly where to begin — no guesswork.</p>
+        </div>
+      </section>
+
+      <div className="wrap narrow course-picker">
+        {LEVEL_TEST_COURSES.map((c) => (
+          <button
+            key={c.id}
+            className={"course-chip" + (activeCourse?.id === c.id ? " active" : "")}
+            style={{ "--chip-accent": c.accent }}
+            onClick={() => selectCourse(c)}
+          >
+            <span className="chip-icon">{c.icon}</span>
+            {c.title}
+          </button>
+        ))}
+      </div>
+
+      <div className="wrap narrow">
+        {!activeCourse && (
+          <div className="empty-state">Pick a course above to start its level check.</div>
+        )}
+
+        {activeCourse && !result && (
+          <QuizPanel
+            course={activeCourse}
+            onExit={() => setActiveCourse(null)}
+            onDone={(score, max) => setResult({ score, max })}
+          />
+        )}
+
+        {activeCourse && result && (
+          <ResultPanel
+            course={activeCourse}
+            score={result.score}
+            max={result.max}
+            onRetake={() => setResult(null)}
+            onExit={() => { setActiveCourse(null); setResult(null); }}
+          />
+        )}
+      </div>
+    </>
+  );
+}
+
+/* ============================================================================
    ROOT APP — owns the current page and passes navigation down
    ============================================================================ */
 
@@ -1328,6 +1681,7 @@ export default function App() {
 
       {page === "home" && <HomePage onNavigate={navigate} />}
       {page === "instructors" && <InstructorsPage onNavigate={navigate} />}
+      {page === "level-test" && <LevelTestPage onNavigate={navigate} />}
       {page === "apply" && <ApplyPage onNavigate={navigate} />}
 
       <SiteFooter onNavigate={navigate} />
