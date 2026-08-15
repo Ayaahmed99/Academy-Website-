@@ -466,7 +466,7 @@ export default function ApplyPage() {
 
             <p className="direct-note">
               Prefer to send it yourself instead? Copy the application and email it to{" "}
-              <a href={`mailto:${ayaahmedd777@gmail.com}`}>{APPLY_EMAIL}</a>.
+              <a href={`mailto:${APPLY_EMAIL}`}>{APPLY_EMAIL}</a>.
             </p>
           </form>
         ) : (
