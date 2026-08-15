@@ -6,7 +6,7 @@ import { Video, PlayCircle, ExternalLink, Users2, Info } from "lucide-react";
 // - Each session's `recordingUrl`: a Google Drive link to that session's recording.
 //   Leave `recordingUrl` as null for a session that hasn't happened / been uploaded yet —
 //   its button will show as disabled with "Not available yet".
-const TEAMS_LINK = "https://teams.microsoft.com/l/meetup-join/YOUR_TEAMS_MEETING_LINK";
+const TEAMS_LINK = "https://teams.live.com/meet/9330551736466?p=coDXkzHq8J1xiPl61r";
 
 const SESSIONS = [
   {
