@@ -1,5 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { X, ArrowRight, Check, Clock, Users, Wifi } from "lucide-react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import {
+  X,
+  ArrowRight,
+  Check,
+  Clock,
+  Users,
+  Wifi,
+  Send,
+  Copy,
+  RotateCcw,
+  Mail,
+  Loader2,
+  AlertTriangle,
+  ArrowLeft,
+} from "lucide-react";
+
+/* ------------------------------------------------------------------ */
+/* DATA                                                                */
+/* ------------------------------------------------------------------ */
 
 const COURSES = [
   {
@@ -101,6 +119,67 @@ const AGE_TIERS = [
   { label: "Builders", range: "10–13", desc: "Real tools, guided projects" },
   { label: "Creators", range: "14–18", desc: "Independent, project-driven" },
 ];
+
+const SUBJECTS = [
+  { id: "ai", icon: "🤖", title: "AI & Smart Technology" },
+  { id: "python", icon: "🐍", title: "Programming & Python" },
+  { id: "canva", icon: "🎨", title: "Canva & Creative Design" },
+  { id: "english", icon: "🇬🇧", title: "English Communication & Conversation" },
+  { id: "scratch", icon: "🎮", title: "Scratch & Game Development" },
+  { id: "other", icon: "✨", title: "Something else" },
+];
+
+const EXPERIENCE_OPTIONS = ["Less than 1 year", "1–3 years", "3–5 years", "5+ years"];
+const AVAILABILITY_OPTIONS = ["Weekday mornings", "Weekday evenings", "Weekends", "Flexible"];
+
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/xqpzdkjz";
+const APPLY_EMAIL = "ayaahmedd777@gmail.com";
+
+const EMPTY_FORM = {
+  name: "",
+  email: "",
+  phone: "",
+  subject: "",
+  subjectOther: "",
+  experience: "",
+  availability: "",
+  message: "",
+  cv: null,
+  portfolio: null,
+  agree: false,
+};
+
+function buildApplicationText(form, subjectLabel) {
+  return [
+    "New Instructor Application — SparkLab Academy",
+    "",
+    `Name: ${form.name}`,
+    `Email: ${form.email}`,
+    `Phone: ${form.phone}`,
+    `Subject to teach: ${subjectLabel}`,
+    `Experience: ${form.experience}`,
+    `Availability: ${form.availability}`,
+    "",
+    "Why they want to join:",
+    form.message,
+    "",
+    `CV file: ${form.cv ? form.cv.name : "Not attached"}`,
+    `Portfolio file: ${form.portfolio ? form.portfolio.name : "Not attached"}`,
+  ].join("\n");
+}
+
+/* ------------------------------------------------------------------ */
+/* SHARED BITS                                                         */
+/* ------------------------------------------------------------------ */
+
+function Logo() {
+  return (
+    <div className="logo">
+      <span className="logo-mark">&lt;/&gt;</span>
+      SparkLab Academy
+    </div>
+  );
+}
 
 function useTypewriter(lines, speed = 32, pause = 900) {
   const [display, setDisplay] = useState([]);
@@ -295,8 +374,497 @@ function CourseDetail({ course, onClose }) {
   );
 }
 
-export default function App() {
+/* ------------------------------------------------------------------ */
+/* HOME PAGE                                                           */
+/* ------------------------------------------------------------------ */
+
+function HomePage({ onNavigate }) {
   const [active, setActive] = useState(null);
+
+  return (
+    <div className="page-home">
+      <nav className="nav">
+        <div className="nav-inner">
+          <Logo />
+          <div className="nav-links">
+            <a href="#courses">Courses</a>
+            <a href="#why">Why us</a>
+            <a href="#contact">Contact</a>
+            <a
+              href="#teach"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigate("apply");
+              }}
+            >
+              Teach with us
+            </a>
+          </div>
+          <button className="nav-cta">Enroll now</button>
+        </div>
+      </nav>
+
+      <header className="wrap hero">
+        <div>
+          <span className="eyebrow">For ages 6 – 18</span>
+          <h1>
+            Where kids go from <span className="hl">curious</span> to <span className="hl">capable</span>.
+          </h1>
+          <p className="hero-sub">
+            SparkLab Academy teaches programming, AI, design, English and game
+            development to students aged 6 to 18 — through live online
+            sessions, real projects, and small groups.
+          </p>
+          <div className="hero-ctas">
+            <a className="cta-btn" href="#courses">
+              Browse courses <ArrowRight size={16} />
+            </a>
+            <button className="cta-secondary">Talk to us</button>
+          </div>
+        </div>
+        <Terminal />
+      </header>
+
+      <section className="wrap age-strip">
+        {AGE_TIERS.map((t) => (
+          <div className="age-tier" key={t.label}>
+            <div className="range">Ages {t.range}</div>
+            <div className="label">{t.label}</div>
+            <div className="desc">{t.desc}</div>
+          </div>
+        ))}
+      </section>
+
+      <section className="wrap" id="courses">
+        <div className="section-head">
+          <h2>Courses for every age and interest</h2>
+          <p>
+            Five tracks spanning code, creativity and communication. Pick a
+            course to see its levels and what your child will actually build.
+          </p>
+        </div>
+        <div className="course-grid">
+          {COURSES.map((c) => (
+            <CourseCard key={c.id} course={c} onExplore={setActive} />
+          ))}
+        </div>
+      </section>
+
+      <section className="wrap why-strip" id="why">
+        <div className="why-item">
+          <div className="num">01</div>
+          <h4>Live, online, small groups</h4>
+          <p>Real instructors, real-time feedback — not pre-recorded videos.</p>
+        </div>
+        <div className="why-item">
+          <div className="num">02</div>
+          <h4>Built for the age group</h4>
+          <p>Pace and projects tuned for Explorers, Builders and Creators alike.</p>
+        </div>
+        <div className="why-item">
+          <div className="num">03</div>
+          <h4>Something to show for it</h4>
+          <p>Every course ends with a real project, not just a certificate.</p>
+        </div>
+      </section>
+
+      <section className="wrap teach-strip" id="teach">
+        <div className="teach-copy">
+          <span className="eyebrow">Now hiring instructors</span>
+          <h2>Know a subject well? Teach it here.</h2>
+          <p>
+            We're building out live classes across AI, code, design and
+            English. If you can explain something clearly and love working
+            with kids, we'd like to hear from you.
+          </p>
+        </div>
+        <button className="cta-btn teach-cta" onClick={() => onNavigate("apply")}>
+          Apply to teach <ArrowRight size={16} />
+        </button>
+      </section>
+
+      <footer className="wrap footer" id="contact">
+        <span>© {new Date().getFullYear()} SparkLab Academy</span>
+        <div className="footer-links">
+          <span>Live online classes · Ages 6–18</span>
+          <a
+            href="#teach"
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigate("apply");
+            }}
+          >
+            Careers
+          </a>
+        </div>
+      </footer>
+
+      {active && <CourseDetail course={active} onClose={() => setActive(null)} />}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* APPLY PAGE                                                          */
+/* ------------------------------------------------------------------ */
+
+function Field({ label, required, children, error }) {
+  return (
+    <label className="field">
+      <span className="field-label">
+        {label} {required && <span className="req">*</span>}
+      </span>
+      {children}
+      {error && <span className="field-error">{error}</span>}
+    </label>
+  );
+}
+
+function ApplyPage({ onNavigate }) {
+  const formRef = useRef(null);
+
+  const [form, setForm] = useState(EMPTY_FORM);
+  const [showErrors, setShowErrors] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [formKey, setFormKey] = useState(0);
+
+  const [submitting, setSubmitting] = useState(false);
+  const [succeeded, setSucceeded] = useState(false);
+  const [usedFallback, setUsedFallback] = useState(false);
+
+  function update(key, value) {
+    setForm((f) => ({ ...f, [key]: value }));
+  }
+
+  const isValid =
+    form.name.trim() &&
+    form.email.trim() &&
+    form.phone.trim() &&
+    form.subject &&
+    (form.subject !== "other" || form.subjectOther.trim()) &&
+    form.experience &&
+    form.availability &&
+    form.message.trim() &&
+    form.cv &&
+    form.agree;
+
+  const subjectLabel =
+    form.subject === "other" ? form.subjectOther || "General" : SUBJECTS.find((s) => s.id === form.subject)?.title || "General";
+
+  const applicationText = useMemo(() => buildApplicationText(form, subjectLabel), [form, subjectLabel]);
+
+  const mailtoHref = useMemo(() => {
+    const subjectLine = `Instructor Application — ${subjectLabel} — ${form.name || "Applicant"}`;
+    return `mailto:${APPLY_EMAIL}?subject=${encodeURIComponent(subjectLine)}&body=${encodeURIComponent(applicationText)}`;
+  }, [applicationText, subjectLabel, form.name]);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!isValid) {
+      setShowErrors(true);
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const fd = new FormData(formRef.current);
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        body: fd,
+        headers: { Accept: "application/json" },
+      });
+
+      if (res.ok) {
+        setUsedFallback(false);
+        setSucceeded(true);
+      } else {
+        throw new Error(`Formspree responded with ${res.status}`);
+      }
+    } catch (err) {
+      window.location.href = mailtoHref;
+      setUsedFallback(true);
+      setSucceeded(true);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function copyApplication() {
+    try {
+      await navigator.clipboard.writeText(applicationText);
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = applicationText;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  function startOver() {
+    setForm(EMPTY_FORM);
+    setShowErrors(false);
+    setSucceeded(false);
+    setUsedFallback(false);
+    setFormKey((k) => k + 1);
+  }
+
+  return (
+    <div className="page-apply">
+      <nav className="nav">
+        <div className="nav-inner">
+          <Logo />
+          <button
+            type="button"
+            className="back-link"
+            onClick={() => onNavigate("home")}
+          >
+            <ArrowLeft size={15} /> Back to home
+          </button>
+        </div>
+      </nav>
+
+      <section className="wrap intro">
+        <span className="eyebrow">Join the team</span>
+        <h1>Apply to teach at SparkLab Academy</h1>
+        <p>Tell us about yourself and what you'd like to teach. We'll get your application either way — no email app required, but it's there as a backup.</p>
+      </section>
+
+      <div className="wrap">
+        {!succeeded ? (
+          <form className="form-card" key={formKey} ref={formRef} onSubmit={handleSubmit} noValidate>
+            <div className="form-grid">
+              <Field label="Full name" required error={showErrors && !form.name.trim() ? "Please enter your name" : null}>
+                <input
+                  type="text"
+                  name="name"
+                  className={showErrors && !form.name.trim() ? "err" : ""}
+                  value={form.name}
+                  onChange={(e) => update("name", e.target.value)}
+                  placeholder="Your name"
+                />
+              </Field>
+
+              <Field label="Email" required error={showErrors && !form.email.trim() ? "Please enter your email" : null}>
+                <input
+                  type="email"
+                  name="email"
+                  className={showErrors && !form.email.trim() ? "err" : ""}
+                  value={form.email}
+                  onChange={(e) => update("email", e.target.value)}
+                  placeholder="you@example.com"
+                />
+              </Field>
+
+              <Field label="Phone" required error={showErrors && !form.phone.trim() ? "Please enter your phone number" : null}>
+                <input
+                  type="tel"
+                  name="phone"
+                  className={showErrors && !form.phone.trim() ? "err" : ""}
+                  value={form.phone}
+                  onChange={(e) => update("phone", e.target.value)}
+                  placeholder="+20 1xx xxx xxxx"
+                />
+              </Field>
+
+              <Field
+                label="Subject you'd like to teach"
+                required
+                error={showErrors && !form.subject ? "Please choose a subject" : null}
+              >
+                <select
+                  className={showErrors && !form.subject ? "err" : ""}
+                  value={form.subject}
+                  onChange={(e) => update("subject", e.target.value)}
+                >
+                  <option value="">Select a subject</option>
+                  {SUBJECTS.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.icon} {s.title}
+                    </option>
+                  ))}
+                </select>
+                <input type="hidden" name="subject" value={subjectLabel} />
+              </Field>
+
+              {form.subject === "other" && (
+                <Field
+                  label="What subject?"
+                  required
+                  error={showErrors && !form.subjectOther.trim() ? "Please tell us what you'd like to teach" : null}
+                >
+                  <input
+                    type="text"
+                    name="subject_other"
+                    className={showErrors && !form.subjectOther.trim() ? "err" : ""}
+                    value={form.subjectOther}
+                    onChange={(e) => update("subjectOther", e.target.value)}
+                    placeholder="e.g. Robotics"
+                  />
+                </Field>
+              )}
+
+              <Field
+                label="Years of relevant experience"
+                required
+                error={showErrors && !form.experience ? "Please select your experience" : null}
+              >
+                <select
+                  name="experience"
+                  className={showErrors && !form.experience ? "err" : ""}
+                  value={form.experience}
+                  onChange={(e) => update("experience", e.target.value)}
+                >
+                  <option value="">Select a range</option>
+                  {EXPERIENCE_OPTIONS.map((o) => (
+                    <option key={o} value={o}>
+                      {o}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+
+              <Field
+                label="Availability"
+                required
+                error={showErrors && !form.availability ? "Please select your availability" : null}
+              >
+                <select
+                  name="availability"
+                  className={showErrors && !form.availability ? "err" : ""}
+                  value={form.availability}
+                  onChange={(e) => update("availability", e.target.value)}
+                >
+                  <option value="">Select availability</option>
+                  {AVAILABILITY_OPTIONS.map((o) => (
+                    <option key={o} value={o}>
+                      {o}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+
+              <div className="field full">
+                <Field
+                  label="Why do you want to join SparkLab Academy?"
+                  required
+                  error={showErrors && !form.message.trim() ? "Please tell us why you'd like to join" : null}
+                >
+                  <textarea
+                    name="message"
+                    className={showErrors && !form.message.trim() ? "err" : ""}
+                    value={form.message}
+                    onChange={(e) => update("message", e.target.value)}
+                    placeholder="Tell us about your teaching experience and why you'd be a good fit..."
+                  />
+                </Field>
+              </div>
+
+              <Field label="CV / resume" required error={showErrors && !form.cv ? "Please attach your CV" : null}>
+                <input
+                  type="file"
+                  name="cv"
+                  accept=".pdf,.doc,.docx"
+                  className={showErrors && !form.cv ? "err" : ""}
+                  onChange={(e) => update("cv", e.target.files?.[0] || null)}
+                />
+                <span className="field-hint">{form.cv ? form.cv.name : "PDF or Word"}</span>
+              </Field>
+
+              <Field label="Portfolio (optional)">
+                <input
+                  type="file"
+                  name="portfolio"
+                  accept=".pdf,.doc,.docx,.zip,.ppt,.pptx"
+                  onChange={(e) => update("portfolio", e.target.files?.[0] || null)}
+                />
+                <span className="field-hint">{form.portfolio ? form.portfolio.name : "Samples of your work, e.g. slides, projects, videos"}</span>
+              </Field>
+
+              <input type="hidden" name="_subject" value={`Instructor Application — ${subjectLabel} — ${form.name || "Applicant"}`} />
+            </div>
+
+            <div className="divider" />
+
+            <div className="checkbox-row">
+              <input
+                type="checkbox"
+                id="agree"
+                checked={form.agree}
+                onChange={(e) => update("agree", e.target.checked)}
+              />
+              <label htmlFor="agree">
+                I agree to be contacted by SparkLab Academy about this application.
+                {showErrors && !form.agree && <span className="field-error"> — please confirm to continue</span>}
+              </label>
+            </div>
+
+            <div className="submit-row">
+              <button type="submit" className="cta-btn" disabled={submitting}>
+                {submitting ? <Loader2 size={16} className="spin" /> : <Send size={16} />}
+                {submitting ? "Sending…" : "Send application"}
+              </button>
+              <button type="button" className="cta-btn outline" onClick={copyApplication}>
+                {copied ? <Check size={16} /> : <Copy size={16} />}
+                {copied ? "Copied" : "Copy instead"}
+              </button>
+            </div>
+
+            <p className="direct-note">
+              If sending doesn't go through, this automatically opens a pre-filled email to{" "}
+              <a href={`mailto:${APPLY_EMAIL}`}>{APPLY_EMAIL}</a> instead — your application is never lost.
+            </p>
+          </form>
+        ) : (
+          <div className="success-card">
+            <div className="success-icon">
+              <Mail size={22} />
+            </div>
+            <h2>{usedFallback ? "Your email app should be opening now" : "Application received"}</h2>
+            <p>
+              {usedFallback
+                ? `We couldn't reach our form service, so we've filled a new email to ${APPLY_EMAIL} with your details — just review it and hit send.`
+                : `Thanks for applying — your details${form.cv ? " and CV" : ""}${form.portfolio ? " and portfolio" : ""} have been sent to our team. We'll be in touch.`}
+            </p>
+            {usedFallback && (
+              <div className="fallback-note">
+                <AlertTriangle size={16} />
+                <span>Files can't travel through email links automatically — please attach your CV{form.portfolio ? " and portfolio" : ""} to the email yourself before sending.</span>
+              </div>
+            )}
+            <div className="success-actions">
+              <button type="button" className="cta-btn outline" onClick={copyApplication}>
+                {copied ? <Check size={16} /> : <Copy size={16} />}
+                {copied ? "Copied" : "Copy application text"}
+              </button>
+              <button type="button" className="cta-btn outline" onClick={startOver}>
+                <RotateCcw size={15} /> Start a new application
+              </button>
+              <button type="button" className="cta-btn outline" onClick={() => onNavigate("home")}>
+                <ArrowLeft size={15} /> Back to home
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* APP SHELL (routing between pages + shared styles)                   */
+/* ------------------------------------------------------------------ */
+
+export default function App() {
+  const [page, setPage] = useState("home");
+
+  function navigate(target) {
+    setPage(target);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   return (
     <div className="app">
@@ -334,13 +902,15 @@ export default function App() {
           color: var(--ink);
         }
         p { margin: 0; }
-        button { font-family: inherit; cursor: pointer; }
+        button, a.btn { font-family: inherit; cursor: pointer; }
+        a { color: inherit; }
 
         .wrap {
           max-width: 1120px;
           margin: 0 auto;
           padding: 0 24px;
         }
+        .page-apply .wrap { max-width: 720px; }
 
         /* NAV */
         .nav {
@@ -359,6 +929,7 @@ export default function App() {
           align-items: center;
           justify-content: space-between;
         }
+        .page-apply .nav-inner { max-width: 720px; }
         .logo {
           display: flex;
           align-items: center;
@@ -384,7 +955,7 @@ export default function App() {
           font-weight: 500;
           color: var(--ink-soft);
         }
-        .nav-links a { text-decoration: none; color: inherit; }
+        .nav-links a { text-decoration: none; color: inherit; cursor: pointer; }
         .nav-links a:hover { color: var(--ink); }
         .nav-cta {
           background: var(--ink);
@@ -396,6 +967,20 @@ export default function App() {
           font-weight: 600;
         }
         @media (max-width: 720px) { .nav-links { display: none; } }
+
+        .back-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          background: transparent;
+          border: 1.5px solid var(--line);
+          color: var(--ink);
+          font-size: 13.5px;
+          font-weight: 600;
+          padding: 8px 13px;
+          border-radius: 8px;
+        }
+        .back-link:hover { border-color: var(--ink); }
 
         /* HERO */
         .hero {
@@ -449,16 +1034,18 @@ export default function App() {
           display: inline-flex;
           align-items: center;
           gap: 8px;
-          transition: transform 0.15s ease, box-shadow 0.15s ease;
+          text-decoration: none;
+          transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
         }
-        .cta-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(14,110,102,0.25); }
+        .cta-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(14,110,102,0.25); background: var(--teal-deep); }
         .cta-btn.outline {
           background: transparent;
           color: var(--ink);
           border: 1.5px solid var(--line);
         }
-        .cta-btn.outline:hover { border-color: var(--ink); box-shadow: none; }
+        .cta-btn.outline:hover { border-color: var(--ink); box-shadow: none; background: transparent; }
         .cta-btn.full { width: 100%; justify-content: center; margin-top: 26px; }
+        .cta-btn:disabled { opacity: 0.65; cursor: not-allowed; transform: none; box-shadow: none; }
         .cta-secondary {
           background: transparent;
           border: none;
@@ -468,6 +1055,8 @@ export default function App() {
           padding: 13px 6px;
         }
         .cta-secondary:hover { color: var(--ink); }
+        .spin { animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         /* TERMINAL */
         .terminal {
@@ -649,6 +1238,34 @@ export default function App() {
         .why-item h4 { font-size: 16px; margin-top: 8px; }
         .why-item p { margin-top: 6px; font-size: 14px; color: var(--ink-soft); }
 
+        /* TEACH STRIP */
+        .teach-strip {
+          border-top: 1px solid var(--line);
+          background: var(--teal-deep);
+          background: linear-gradient(135deg, var(--teal-deep), var(--teal));
+          border-radius: 18px;
+          margin-bottom: 60px;
+          padding: 40px 40px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 28px;
+          flex-wrap: wrap;
+        }
+        .teach-strip .eyebrow {
+          background: rgba(255,255,255,0.14);
+          color: #E4FFF7;
+        }
+        .teach-strip h2 { color: #fff; font-size: clamp(22px, 2.6vw, 28px); }
+        .teach-strip p { color: rgba(255,255,255,0.78); margin-top: 10px; font-size: 14.5px; max-width: 48ch; }
+        .teach-copy { flex: 1; min-width: 240px; }
+        .teach-cta {
+          background: #fff;
+          color: var(--teal-deep);
+          white-space: nowrap;
+        }
+        .teach-cta:hover { background: #EAF6F3; box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+
         /* FOOTER */
         .footer {
           border-top: 1px solid var(--line);
@@ -661,6 +1278,9 @@ export default function App() {
           flex-wrap: wrap;
           gap: 12px;
         }
+        .footer-links { display: flex; gap: 18px; align-items: center; }
+        .footer-links a { text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+        .footer-links a:hover { color: var(--ink); }
 
         /* OVERLAY / DRAWER */
         .overlay {
@@ -809,93 +1429,83 @@ export default function App() {
           color: var(--ink-soft);
           font-style: italic;
         }
+
+        /* APPLY PAGE */
+        .intro { padding: 52px 0 8px; text-align: center; }
+        .intro h1 { font-size: clamp(26px, 4vw, 36px); line-height: 1.15; }
+        .intro p { margin-top: 14px; color: var(--ink-soft); font-size: 15px; max-width: 54ch; margin-left: auto; margin-right: auto; }
+
+        .form-card {
+          background: var(--paper-raised); border: 1px solid var(--line); border-top: 3px solid var(--teal);
+          border-radius: 16px; padding: 32px; margin: 36px 0 90px;
+        }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 16px; }
+        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+        .field.full { grid-column: 1 / -1; }
+
+        .field { display: flex; flex-direction: column; gap: 6px; }
+        .field-label { font-size: 13.5px; font-weight: 600; }
+        .req { color: var(--coral); }
+        .field-error { font-size: 12px; color: var(--coral); }
+
+        input[type="text"], input[type="email"], input[type="tel"], input[type="url"], select, textarea {
+          font-family: 'Inter', sans-serif;
+          font-size: 14.5px;
+          padding: 11px 13px;
+          border: 1.5px solid var(--line);
+          border-radius: 9px;
+          background: var(--paper);
+          color: var(--ink);
+          width: 100%;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--teal); outline: none; }
+        input.err, select.err, textarea.err { border-color: var(--coral); }
+        textarea { resize: vertical; min-height: 100px; font-family: inherit; }
+
+        input[type="file"] {
+          font-size: 13px; padding: 9px 10px; border: 1.5px dashed var(--line); border-radius: 9px;
+          background: var(--paper); color: var(--ink-soft); width: 100%;
+        }
+        input[type="file"].err { border-color: var(--coral); }
+        input[type="file"]::file-selector-button {
+          font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 600; color: #fff;
+          background: var(--teal); border: none; border-radius: 6px; padding: 7px 11px; margin-right: 10px; cursor: pointer;
+        }
+        .field-hint { font-size: 12px; color: var(--ink-soft); }
+
+        .checkbox-row { display: flex; align-items: flex-start; gap: 10px; margin-top: 6px; }
+        .checkbox-row input { width: 16px; height: 16px; margin-top: 2px; accent-color: var(--teal); }
+        .checkbox-row label { font-size: 13.5px; color: var(--ink-soft); line-height: 1.4; }
+
+        .divider { height: 1px; background: var(--line); margin: 26px 0; }
+
+        .submit-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 26px; }
+
+        .direct-note { font-size: 12.5px; color: var(--ink-soft); margin-top: 14px; }
+        .direct-note a { font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+
+        .fallback-note {
+          display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--teal-deep);
+          background: rgba(242,169,59,0.12); border: 1px solid rgba(242,169,59,0.35); border-radius: 9px;
+          padding: 10px 12px; margin-top: 18px; text-align: left;
+        }
+        .fallback-note svg { flex-shrink: 0; margin-top: 1px; color: var(--amber); }
+
+        .success-card {
+          background: var(--paper-raised); border: 1px solid var(--line); border-top: 3px solid var(--teal);
+          border-radius: 16px; padding: 36px 32px; margin: 36px 0 90px; text-align: center;
+        }
+        .success-icon {
+          width: 52px; height: 52px; border-radius: 50%; background: rgba(14,110,102,0.1); color: var(--teal-deep);
+          display: flex; align-items: center; justify-content: center; margin: 0 auto 18px;
+        }
+        .success-card h2 { font-size: 21px; margin-bottom: 10px; }
+        .success-card p { color: var(--ink-soft); font-size: 14.5px; max-width: 44ch; margin: 0 auto; }
+        .success-actions { display: flex; justify-content: center; gap: 12px; margin-top: 26px; flex-wrap: wrap; }
       `}</style>
 
-      <nav className="nav">
-        <div className="nav-inner">
-          <div className="logo">
-            <span className="logo-mark">&lt;/&gt;</span>
-            SparkLab Academy
-          </div>
-          <div className="nav-links">
-            <a href="#courses">Courses</a>
-            <a href="#why">Why us</a>
-            <a href="#contact">Contact</a>
-          </div>
-          <button className="nav-cta">Enroll now</button>
-        </div>
-      </nav>
-
-      <header className="wrap hero">
-        <div>
-          <span className="eyebrow">For ages 6 – 18</span>
-          <h1>
-            Where kids go from <span className="hl">curious</span> to <span className="hl">capable</span>.
-          </h1>
-          <p className="hero-sub">
-            SparkLab Academy teaches programming, AI, design, English and game
-            development to students aged 6 to 18 — through live online
-            sessions, real projects, and small groups.
-          </p>
-          <div className="hero-ctas">
-            <button className="cta-btn">
-              Browse courses <ArrowRight size={16} />
-            </button>
-            <button className="cta-secondary">Talk to us</button>
-          </div>
-        </div>
-        <Terminal />
-      </header>
-
-      <section className="wrap age-strip">
-        {AGE_TIERS.map((t) => (
-          <div className="age-tier" key={t.label}>
-            <div className="range">Ages {t.range}</div>
-            <div className="label">{t.label}</div>
-            <div className="desc">{t.desc}</div>
-          </div>
-        ))}
-      </section>
-
-      <section className="wrap" id="courses">
-        <div className="section-head">
-          <h2>Courses for every age and interest</h2>
-          <p>
-            Five tracks spanning code, creativity and communication. Pick a
-            course to see its levels and what your child will actually build.
-          </p>
-        </div>
-        <div className="course-grid">
-          {COURSES.map((c) => (
-            <CourseCard key={c.id} course={c} onExplore={setActive} />
-          ))}
-        </div>
-      </section>
-
-      <section className="wrap why-strip" id="why">
-        <div className="why-item">
-          <div className="num">01</div>
-          <h4>Live, online, small groups</h4>
-          <p>Real instructors, real-time feedback — not pre-recorded videos.</p>
-        </div>
-        <div className="why-item">
-          <div className="num">02</div>
-          <h4>Built for the age group</h4>
-          <p>Pace and projects tuned for Explorers, Builders and Creators alike.</p>
-        </div>
-        <div className="why-item">
-          <div className="num">03</div>
-          <h4>Something to show for it</h4>
-          <p>Every course ends with a real project, not just a certificate.</p>
-        </div>
-      </section>
-
-      <footer className="wrap footer" id="contact">
-        <span>© {new Date().getFullYear()} SparkLab Academy</span>
-        <span>Live online classes · Ages 6–18</span>
-      </footer>
-
-      {active && <CourseDetail course={active} onClose={() => setActive(null)} />}
+      {page === "home" ? <HomePage onNavigate={navigate} /> : <ApplyPage onNavigate={navigate} />}
     </div>
   );
 }
