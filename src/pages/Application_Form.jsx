@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from "react";
-import { Send, Copy, Check, RotateCcw, Mail, Loader2 } from "lucide-react";
-import { useForm, ValidationError } from "@formspree/react";
+import React, { useState, useMemo, useRef } from "react";
+import { Send, Copy, Check, RotateCcw, Mail, Loader2, AlertTriangle } from "lucide-react";
 
-// Formspree endpoint — submissions are delivered straight to your inbox,
-// including the CV/portfolio file attachments.
-const FORMSPREE_FORM_ID = "xqpzdkjz";
+// Formspree endpoint — submissions post here first. If that request fails
+// for any reason (offline, blocked, endpoint issue), the form automatically
+// falls back to opening a pre-filled email instead, so the application is
+// never lost either way.
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/xqpzdkjz";
 const APPLY_EMAIL = "ayaahmedd777@gmail.com";
 
 const SUBJECTS = [
@@ -65,20 +66,22 @@ function Field({ label, required, children, error }) {
 }
 
 export default function ApplyPage() {
-  // @formspree/react's useForm hook manages the submission lifecycle
-  // (submitting / succeeded / errors) against your Formspree endpoint.
-  const [formspreeState, submitToFormspree, resetFormspree] = useForm(FORMSPREE_FORM_ID);
+  const formRef = useRef(null);
 
   const [form, setForm] = useState(EMPTY_FORM);
   const [showErrors, setShowErrors] = useState(false);
   const [copied, setCopied] = useState(false);
   const [formKey, setFormKey] = useState(0); // bumped on reset to clear native file inputs
 
+  const [submitting, setSubmitting] = useState(false);
+  const [succeeded, setSucceeded] = useState(false);
+  const [usedFallback, setUsedFallback] = useState(false); // true if delivered via email instead of Formspree
+
   function update(key, value) {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
-  // Portfolio is now optional — only CV is required alongside the other fields.
+  // Portfolio is optional — only CV is required alongside the other fields.
   const isValid =
     form.name.trim() &&
     form.email.trim() &&
@@ -96,17 +99,43 @@ export default function ApplyPage() {
 
   const applicationText = useMemo(() => buildApplicationText(form, subjectLabel), [form, subjectLabel]);
 
-  // Client-side check first (so people see friendly inline errors), then hand
-  // the native form event off to Formspree, which reads the form's FormData
-  // directly — including the file inputs — since every field below has a
-  // `name` attribute.
-  function handleSubmit(e) {
+  const mailtoHref = useMemo(() => {
+    const subjectLine = `Instructor Application — ${subjectLabel} — ${form.name || "Applicant"}`;
+    return `mailto:${APPLY_EMAIL}?subject=${encodeURIComponent(subjectLine)}&body=${encodeURIComponent(applicationText)}`;
+  }, [applicationText, subjectLabel, form.name]);
+
+  async function handleSubmit(e) {
     e.preventDefault();
     if (!isValid) {
       setShowErrors(true);
       return;
     }
-    submitToFormspree(e);
+
+    setSubmitting(true);
+    try {
+      const fd = new FormData(formRef.current);
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        body: fd,
+        headers: { Accept: "application/json" },
+      });
+
+      if (res.ok) {
+        setUsedFallback(false);
+        setSucceeded(true);
+      } else {
+        throw new Error(`Formspree responded with ${res.status}`);
+      }
+    } catch (err) {
+      // Formspree unreachable, blocked, or erroring — fall back to opening a
+      // pre-filled email so the application still reaches the inbox.
+      // (Attachments can't travel through mailto, so mention that in the copy.)
+      window.location.href = mailtoHref;
+      setUsedFallback(true);
+      setSucceeded(true);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   async function copyApplication() {
@@ -127,8 +156,9 @@ export default function ApplyPage() {
   function startOver() {
     setForm(EMPTY_FORM);
     setShowErrors(false);
+    setSucceeded(false);
+    setUsedFallback(false);
     setFormKey((k) => k + 1);
-    resetFormspree();
   }
 
   return (
@@ -236,10 +266,12 @@ export default function ApplyPage() {
         .direct-note { font-size: 12.5px; color: var(--ink-soft); margin-top: 14px; }
         .direct-note a { font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
 
-        .form-error {
-          font-size: 13px; color: var(--coral); background: rgba(239,111,92,0.08);
-          border: 1px solid rgba(239,111,92,0.25); border-radius: 9px; padding: 10px 12px; margin-top: 16px;
+        .fallback-note {
+          display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--teal-deep);
+          background: rgba(242,169,59,0.12); border: 1px solid rgba(242,169,59,0.35); border-radius: 9px;
+          padding: 10px 12px; margin-top: 18px; text-align: left;
         }
+        .fallback-note svg { flex-shrink: 0; margin-top: 1px; color: var(--amber); }
 
         .success-card {
           background: var(--paper-raised); border: 1px solid var(--line); border-top: 3px solid var(--teal);
@@ -266,12 +298,12 @@ export default function ApplyPage() {
       <section className="wrap intro">
         <span className="eyebrow">Join the team</span>
         <h1>Apply to teach at SparkLab Academy</h1>
-        <p>Tell us about yourself and what you'd like to teach. Your application goes straight to our team — no email app required.</p>
+        <p>Tell us about yourself and what you'd like to teach. We'll get your application either way — no email app required, but it's there as a backup.</p>
       </section>
 
       <div className="wrap">
-        {!formspreeState.succeeded ? (
-          <form className="form-card" key={formKey} onSubmit={handleSubmit} noValidate>
+        {!succeeded ? (
+          <form className="form-card" key={formKey} ref={formRef} onSubmit={handleSubmit} noValidate>
             <div className="form-grid">
               <Field label="Full name" required error={showErrors && !form.name.trim() ? "Please enter your name" : null}>
                 <input
@@ -293,7 +325,6 @@ export default function ApplyPage() {
                   onChange={(e) => update("email", e.target.value)}
                   placeholder="you@example.com"
                 />
-                <ValidationError prefix="Email" field="email" errors={formspreeState.errors} />
               </Field>
 
               <Field label="Phone" required error={showErrors && !form.phone.trim() ? "Please enter your phone number" : null}>
@@ -324,7 +355,7 @@ export default function ApplyPage() {
                     </option>
                   ))}
                 </select>
-                {/* Hidden field so Formspree receives the resolved label, not the internal id */}
+                {/* Hidden field so Formspree/email receives the resolved label, not the internal id */}
                 <input type="hidden" name="subject" value={subjectLabel} />
               </Field>
 
@@ -414,7 +445,6 @@ export default function ApplyPage() {
                   onChange={(e) => update("cv", e.target.files?.[0] || null)}
                 />
                 <span className="field-hint">{form.cv ? form.cv.name : "PDF or Word"}</span>
-                <ValidationError prefix="CV" field="cv" errors={formspreeState.errors} />
               </Field>
 
               <Field label="Portfolio (optional)">
@@ -425,7 +455,6 @@ export default function ApplyPage() {
                   onChange={(e) => update("portfolio", e.target.files?.[0] || null)}
                 />
                 <span className="field-hint">{form.portfolio ? form.portfolio.name : "Samples of your work, e.g. slides, projects, videos"}</span>
-                <ValidationError prefix="Portfolio" field="portfolio" errors={formspreeState.errors} />
               </Field>
 
               <input type="hidden" name="_subject" value={`Instructor Application — ${subjectLabel} — ${form.name || "Applicant"}`} />
@@ -447,9 +476,9 @@ export default function ApplyPage() {
             </div>
 
             <div className="submit-row">
-              <button type="submit" className="cta-btn" disabled={formspreeState.submitting}>
-                {formspreeState.submitting ? <Loader2 size={16} className="spin" /> : <Send size={16} />}
-                {formspreeState.submitting ? "Sending…" : "Send application"}
+              <button type="submit" className="cta-btn" disabled={submitting}>
+                {submitting ? <Loader2 size={16} className="spin" /> : <Send size={16} />}
+                {submitting ? "Sending…" : "Send application"}
               </button>
               <button type="button" className="cta-btn outline" onClick={copyApplication}>
                 {copied ? <Check size={16} /> : <Copy size={16} />}
@@ -457,16 +486,9 @@ export default function ApplyPage() {
               </button>
             </div>
 
-            {formspreeState.errors && formspreeState.errors.getFormErrors().length > 0 && (
-              <div className="form-error">
-                Something went wrong submitting your application. Please try again, or email it to{" "}
-                <a href={`mailto:${APPLY_EMAIL}`}>{APPLY_EMAIL}</a>.
-              </div>
-            )}
-
             <p className="direct-note">
-              Prefer to send it yourself instead? Copy the application and email it to{" "}
-              <a href={`mailto:${APPLY_EMAIL}`}>{APPLY_EMAIL}</a>.
+              If sending doesn't go through, this automatically opens a pre-filled email to{" "}
+              <a href={`mailto:${APPLY_EMAIL}`}>{APPLY_EMAIL}</a> instead — your application is never lost.
             </p>
           </form>
         ) : (
@@ -474,8 +496,18 @@ export default function ApplyPage() {
             <div className="success-icon">
               <Mail size={22} />
             </div>
-            <h2>Application received</h2>
-            <p>Thanks for applying — your details{form.cv ? " and CV" : ""}{form.portfolio ? " and portfolio" : ""} have been sent to our team. We'll be in touch.</p>
+            <h2>{usedFallback ? "Your email app should be opening now" : "Application received"}</h2>
+            <p>
+              {usedFallback
+                ? `We couldn't reach our form service, so we've filled a new email to ${APPLY_EMAIL} with your details — just review it and hit send.`
+                : `Thanks for applying — your details${form.cv ? " and CV" : ""}${form.portfolio ? " and portfolio" : ""} have been sent to our team. We'll be in touch.`}
+            </p>
+            {usedFallback && (
+              <div className="fallback-note">
+                <AlertTriangle size={16} />
+                <span>Files can't travel through email links automatically — please attach your CV{form.portfolio ? " and portfolio" : ""} to the email yourself before sending.</span>
+              </div>
+            )}
             <div className="success-actions">
               <button type="button" className="cta-btn outline" onClick={copyApplication}>
                 {copied ? <Check size={16} /> : <Copy size={16} />}
