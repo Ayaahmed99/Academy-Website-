@@ -1,11 +1,16 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
-import {
-  X, ArrowRight, ArrowLeft, Check, Clock, Users, Wifi,
-  Send, Copy, RotateCcw, Mail, Loader2, AlertTriangle, Phone, Star, Sparkles,
-} from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { X, ArrowRight, Clock, Users, Wifi, Check, Home as HomeIcon } from "lucide-react";
+
+// The other three pages were already built as their own self-contained
+// components (each ships its own <nav>, styles, and design tokens) — we
+// just import and route to them here instead of re-writing their logic.
+import ApplyPage from "./Application_Form";
+import InstructorsPage from "./Instructors";
+import LevelTestPage from "./Level_Test";
+import SessionsPage from "./Sessions";
 
 /* ============================================================================
-   SHARED DATA
+   HOME PAGE DATA
    ============================================================================ */
 
 const COURSES = [
@@ -109,84 +114,9 @@ const AGE_TIERS = [
   { label: "Creators", range: "14–18", desc: "Independent, project-driven" },
 ];
 
-const INSTRUCTORS = [
-  {
-    id: "mona",
-    name: "Mona Youssef",
-    gender: "female",
-    subject: "Programming & Python",
-    accent: "var(--teal)",
-    email: "mona@sparklabacademy.com",
-    phone: "+20 100 000 0001",
-    rating: 4.9,
-    reviews: [
-      { name: "Laila's parent", rating: 5, text: "My daughter looked forward to every session. She built her first quiz game in the third week." },
-      { name: "Omar's parent", rating: 5, text: "Explains things at exactly the right pace for a 10-year-old. Very patient." },
-      { name: "Yusuf's parent", rating: 4, text: "Great teacher — would love slightly more challenging homework for advanced kids." },
-    ],
-  },
-  {
-    id: "karim",
-    name: "Karim Adel",
-    gender: "male",
-    subject: "AI & Smart Technology",
-    accent: "var(--periwinkle)",
-    email: "karim@sparklabacademy.com",
-    phone: "+20 100 000 0002",
-    rating: 4.8,
-    reviews: [
-      { name: "Nour's parent", rating: 5, text: "Makes AI concepts easy to grasp without dumbing them down. My teenager is genuinely curious now." },
-      { name: "Hassan's parent", rating: 5, text: "Great at connecting AI examples to things kids actually use, like games and apps." },
-    ],
-  },
-  {
-    id: "salma",
-    name: "Salma Ibrahim",
-    gender: "female",
-    subject: "Canva & Creative Design",
-    accent: "var(--coral)",
-    email: "salma@sparklabacademy.com",
-    phone: "+20 100 000 0003",
-    rating: 4.7,
-    reviews: [
-      { name: "Farida's parent", rating: 5, text: "My daughter designed a poster for her school project and got so much praise for it." },
-      { name: "Adam's parent", rating: 4, text: "Good structure, clear examples. Sessions sometimes ran a little long." },
-      { name: "Malak's parent", rating: 5, text: "Very encouraging with younger kids who are shy about their work." },
-    ],
-  },
-  {
-    id: "heba",
-    name: "Heba Fathy",
-    gender: "female",
-    subject: "English Communication & Conversation",
-    accent: "var(--amber)",
-    email: "heba@sparklabacademy.com",
-    phone: "+20 100 000 0004",
-    rating: 4.9,
-    reviews: [
-      { name: "Zeina's parent", rating: 5, text: "Zeina used to freeze up speaking English in front of others. Now she volunteers to present first." },
-      { name: "Tarek's parent", rating: 5, text: "Warm, funny, and genuinely invested in each kid's confidence, not just vocabulary." },
-    ],
-  },
-  {
-    id: "ziad",
-    name: "Ziad Mansour",
-    gender: "male",
-    subject: "Scratch & Game Development",
-    accent: "var(--teal)",
-    email: "ziad@sparklabacademy.com",
-    phone: "+20 100 000 0005",
-    rating: 4.8,
-    reviews: [
-      { name: "Sara's parent", rating: 5, text: "My 8-year-old finished a full animated story and was so proud to show us." },
-      { name: "Ali's parent", rating: 4, text: "Good energy, keeps kids engaged. Would like a bit more 1-on-1 time in group sessions." },
-      { name: "Jana's parent", rating: 5, text: "Turns 'coding' into something that feels like play. Exactly what we wanted." },
-    ],
-  },
-];
-
 /* ============================================================================
-   GLOBAL STYLES (shared design tokens across every page)
+   GLOBAL STYLES (home page + shared shell only — the other pages carry
+   their own copy of these tokens inside their own files)
    ============================================================================ */
 
 function GlobalStyles() {
@@ -215,10 +145,8 @@ function GlobalStyles() {
       a { color: inherit; }
 
       .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
-      .wrap.narrow { max-width: 720px; }
-      .wrap.mid { max-width: 1080px; }
 
-      /* ---------- NAV (shared shell) ---------- */
+      /* ---------- NAV (shared shell for the home page) ---------- */
       .nav {
         position: sticky; top: 0; z-index: 30;
         background: rgba(243,246,244,0.88); backdrop-filter: blur(8px);
@@ -264,14 +192,11 @@ function GlobalStyles() {
         transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease; text-decoration: none;
       }
       .cta-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(14,110,102,0.25); background: var(--teal-deep); }
-      .cta-btn:disabled { opacity: 0.65; cursor: not-allowed; transform: none; box-shadow: none; }
       .cta-btn.outline { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
       .cta-btn.outline:hover { border-color: var(--ink); box-shadow: none; background: rgba(20,48,46,0.03); transform: none; }
       .cta-btn.full { width: 100%; justify-content: center; margin-top: 26px; }
       .cta-secondary { background: transparent; border: none; color: var(--ink-soft); font-weight: 600; font-size: 15px; padding: 13px 6px; }
       .cta-secondary:hover { color: var(--ink); }
-      .spin { animation: spin 0.8s linear infinite; }
-      @keyframes spin { to { transform: rotate(360deg); } }
 
       /* ---------- footer ---------- */
       .footer {
@@ -348,7 +273,7 @@ function GlobalStyles() {
       .why-item h4 { font-size: 16px; margin-top: 8px; }
       .why-item p { margin-top: 6px; font-size: 14px; color: var(--ink-soft); }
 
-      /* Promo band linking to Instructors / Apply pages */
+      /* Promo band linking to Instructors / Apply / Level-test pages */
       .promo-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding-bottom: 70px; }
       @media (max-width: 920px) { .promo-strip { grid-template-columns: 1fr 1fr; } }
       @media (max-width: 620px) { .promo-strip { grid-template-columns: 1fr; } }
@@ -359,7 +284,7 @@ function GlobalStyles() {
       .promo-card h3 { font-size: 19px; }
       .promo-card p { font-size: 14px; color: var(--ink-soft); flex-grow: 1; }
 
-      /* ---------- OVERLAY / DRAWER (course detail + reviews) ---------- */
+      /* ---------- OVERLAY / DRAWER (course detail) ---------- */
       .overlay { position: fixed; inset: 0; background: rgba(10,20,19,0.45); display: flex; justify-content: flex-end; z-index: 50; animation: fadeIn 0.18s ease; }
       @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
       .drawer {
@@ -392,158 +317,31 @@ function GlobalStyles() {
       .preview-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
       .soon-note { font-size: 13px; color: var(--ink-soft); font-style: italic; }
 
-      /* ---------- BACK LINK (Apply / Instructors pages) ---------- */
-      .back-link {
-        display: inline-flex; align-items: center; gap: 6px; background: none; border: none;
-        font-size: 13.5px; font-weight: 600; color: var(--ink-soft); padding: 0;
+      /* ---------- floating "back to home" pill shown on other pages ---------- */
+      .back-home-bar {
+        position: sticky; top: 0; z-index: 40;
+        background: rgba(243,246,244,0.92); backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--line); padding: 10px 24px;
       }
-      .back-link:hover { color: var(--teal-deep); }
-
-      /* ---------- APPLY PAGE ---------- */
-      .intro { padding: 52px 0 8px; text-align: center; }
-      .intro h1 { font-size: clamp(26px, 4vw, 36px); line-height: 1.15; }
-      .intro p { margin-top: 14px; color: var(--ink-soft); font-size: 15px; max-width: 54ch; margin-left: auto; margin-right: auto; }
-
-      .form-card { background: var(--paper-raised); border: 1px solid var(--line); border-top: 3px solid var(--teal); border-radius: 16px; padding: 32px; margin: 36px 0 90px; }
-      .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 16px; }
-      @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
-      .field.full { grid-column: 1 / -1; }
-      .field { display: flex; flex-direction: column; gap: 6px; }
-      .field-label { font-size: 13.5px; font-weight: 600; }
-      .req { color: var(--coral); }
-      .field-error { font-size: 12px; color: var(--coral); }
-
-      input[type="text"], input[type="email"], input[type="tel"], input[type="url"], select, textarea {
-        font-family: 'Inter', sans-serif; font-size: 14.5px; padding: 11px 13px; border: 1.5px solid var(--line);
-        border-radius: 9px; background: var(--paper); color: var(--ink); width: 100%;
+      .back-home-pill {
+        display: inline-flex; align-items: center; gap: 7px; background: var(--paper-raised);
+        border: 1px solid var(--line); border-radius: 100px; padding: 7px 14px 7px 10px;
+        font-size: 13.5px; font-weight: 600; color: var(--ink);
       }
-      input:focus, select:focus, textarea:focus { border-color: var(--teal); outline: none; }
-      input.err, select.err, textarea.err { border-color: var(--coral); }
-      textarea { resize: vertical; min-height: 100px; font-family: inherit; }
-
-      input[type="file"] { font-size: 13px; padding: 9px 10px; border: 1.5px dashed var(--line); border-radius: 9px; background: var(--paper); color: var(--ink-soft); width: 100%; }
-      input[type="file"].err { border-color: var(--coral); }
-      input[type="file"]::file-selector-button {
-        font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 600; color: #fff; background: var(--teal);
-        border: none; border-radius: 6px; padding: 7px 11px; margin-right: 10px; cursor: pointer;
-      }
-      .field-hint { font-size: 12px; color: var(--ink-soft); }
-
-      .checkbox-row { display: flex; align-items: flex-start; gap: 10px; margin-top: 6px; }
-      .checkbox-row input { width: 16px; height: 16px; margin-top: 2px; accent-color: var(--teal); }
-      .checkbox-row label { font-size: 13.5px; color: var(--ink-soft); line-height: 1.4; }
-
-      .divider { height: 1px; background: var(--line); margin: 26px 0; }
-
-      .submit-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 26px; }
-      .direct-note { font-size: 12.5px; color: var(--ink-soft); margin-top: 14px; }
-      .direct-note a { font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
-
-      .fallback-note {
-        display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--teal-deep);
-        background: rgba(242,169,59,0.12); border: 1px solid rgba(242,169,59,0.35); border-radius: 9px;
-        padding: 10px 12px; margin-top: 18px; text-align: left;
-      }
-      .fallback-note svg { flex-shrink: 0; margin-top: 1px; color: var(--amber); }
-
-      .success-card { background: var(--paper-raised); border: 1px solid var(--line); border-top: 3px solid var(--teal); border-radius: 16px; padding: 36px 32px; margin: 36px 0 90px; text-align: center; }
-      .success-icon { width: 52px; height: 52px; border-radius: 50%; background: rgba(14,110,102,0.1); color: var(--teal-deep); display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; }
-      .success-card h2 { font-size: 21px; margin-bottom: 10px; }
-      .success-card p { color: var(--ink-soft); font-size: 14.5px; max-width: 44ch; margin: 0 auto; }
-      .success-actions { display: flex; justify-content: center; gap: 12px; margin-top: 26px; flex-wrap: wrap; }
-
-      /* ---------- INSTRUCTORS PAGE ---------- */
-      .sample-note { text-align: center; font-size: 12.5px; color: var(--ink-soft); font-style: italic; margin: 18px auto 46px; max-width: 60ch; }
-      .instructor-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding-bottom: 80px; }
-      @media (max-width: 920px) { .instructor-grid { grid-template-columns: repeat(2, 1fr); } }
-      @media (max-width: 620px) { .instructor-grid { grid-template-columns: 1fr; } }
-      .instructor-card {
-        background: var(--paper-raised); border: 1px solid var(--line); border-top: 3px solid var(--accent);
-        border-radius: 14px; padding: 22px; transition: transform 0.15s ease, box-shadow 0.15s ease;
-      }
-      .instructor-card:hover { transform: translateY(-3px); box-shadow: 0 16px 32px rgba(20,48,46,0.08); }
-      .card-top { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
-      .avatar { border-radius: 50%; flex-shrink: 0; overflow: hidden; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05); background: #EEF2F0; }
-      .avatar svg { display: block; }
-      .i-name { font-size: 16.5px; font-weight: 700; }
-      .i-subject { font-size: 13px; color: var(--ink-soft); margin-top: 2px; }
-      .rating-row { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
-      .stars { display: flex; gap: 2px; }
-      .rating-num { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; }
-      .rating-count { font-size: 12.5px; color: var(--ink-soft); }
-      .review-link { font-size: 12.5px; font-weight: 600; color: var(--teal-deep); text-decoration: underline; text-underline-offset: 2px; background: none; border: none; padding: 0; }
-      .contact-block { display: flex; flex-direction: column; gap: 8px; padding-top: 14px; border-top: 1px solid var(--line); }
-      .contact-row { display: flex; align-items: center; gap: 9px; font-size: 13.5px; color: var(--ink-soft); text-decoration: none; }
-      .contact-row:hover { color: var(--ink); }
-      .reviews-list { display: flex; flex-direction: column; gap: 4px; }
-      .review-item { padding: 16px 0; border-top: 1px solid var(--line); }
-      .review-item:first-child { border-top: none; }
-      .review-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
-      .review-name { font-weight: 600; font-size: 13.5px; }
-      .review-text { font-size: 14px; color: var(--ink-soft); line-height: 1.5; }
-
-      /* ---------- LEVEL TEST PAGE ---------- */
-      .course-picker { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; padding-bottom: 44px; }
-      .course-chip {
-        display: flex; align-items: center; gap: 8px; background: var(--paper-raised); border: 1.5px solid var(--line);
-        padding: 10px 16px; border-radius: 100px; font-size: 14px; font-weight: 600;
-        transition: border-color 0.15s ease, transform 0.15s ease;
-      }
-      .course-chip:hover { transform: translateY(-1px); }
-      .course-chip.active { border-color: var(--chip-accent); background: color-mix(in srgb, var(--chip-accent) 8%, white); }
-      .chip-icon { font-size: 17px; }
-
-      .empty-state { text-align: center; padding: 60px 20px 80px; color: var(--ink-soft); font-size: 14.5px; }
-
-      .quiz-card {
-        background: var(--paper-raised); border: 1px solid var(--line); border-top: 3px solid var(--accent);
-        border-radius: 16px; padding: 30px 30px 34px; margin-bottom: 80px;
-      }
-      .quiz-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
-      .text-btn {
-        background: none; border: none; color: var(--ink-soft); font-size: 13.5px; font-weight: 600;
-        display: flex; align-items: center; gap: 6px; padding: 4px 0;
-      }
-      .text-btn:hover { color: var(--ink); }
-      .quiz-count { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-soft); }
-
-      .progress-track { height: 6px; background: var(--line); border-radius: 100px; overflow: hidden; margin-bottom: 28px; }
-      .progress-fill { height: 100%; background: var(--accent); border-radius: 100px; transition: width 0.3s ease; }
-
-      .question { font-size: 21px; line-height: 1.35; margin-bottom: 22px; }
-
-      .options { display: flex; flex-direction: column; gap: 10px; }
-      .option-btn {
-        text-align: left; background: var(--paper); border: 1.5px solid var(--line); padding: 14px 16px;
-        border-radius: 10px; font-size: 14.5px; font-weight: 500; color: var(--ink);
-        transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
-      }
-      .option-btn:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 6%, white); transform: translateX(2px); }
-
-      .result-head { display: flex; align-items: center; gap: 22px; margin-bottom: 18px; flex-wrap: wrap; }
-      .dial { flex-shrink: 0; }
-      .dial-fill { transition: stroke-dashoffset 0.6s ease; }
-      .dial-text { font-family: 'JetBrains Mono', monospace; font-size: 18px; fill: var(--ink); font-weight: 500; }
-      .result-eyebrow {
-        display: flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px;
-        text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft); margin-bottom: 6px;
-      }
-      .result-name { font-size: 24px; }
-      .result-blurb { color: var(--ink-soft); font-size: 15px; margin-bottom: 24px; }
-      .result-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+      .back-home-pill:hover { border-color: var(--teal); color: var(--teal-deep); }
     `}</style>
   );
 }
 
 /* ============================================================================
-   SHARED NAV — every page routes through this, so the buttons requested
-   for navigation live in exactly one place.
+   SHARED NAV (home page only — the other three pages carry their own)
    ============================================================================ */
 
 const PAGES = [
   { id: "home", label: "Home" },
   { id: "instructors", label: "Instructors" },
   { id: "level-test", label: "Find your level" },
+  { id: "sessions", label: "Sessions" },
   { id: "apply", label: "Apply to teach" },
 ];
 
@@ -583,6 +381,7 @@ function SiteFooter({ onNavigate }) {
         <button onClick={() => onNavigate("home")}>Home</button>
         <button onClick={() => onNavigate("instructors")}>Instructors</button>
         <button onClick={() => onNavigate("level-test")}>Find your level</button>
+        <button onClick={() => onNavigate("sessions")}>Sessions</button>
         <button onClick={() => onNavigate("apply")}>Apply to teach</button>
       </div>
     </footer>
@@ -876,794 +675,9 @@ function HomePage({ onNavigate }) {
 }
 
 /* ============================================================================
-   INSTRUCTORS PAGE
-   ============================================================================ */
-
-function hashString(str) {
-  let h = 0;
-  for (let i = 0; i < str.length; i++) h = (Math.imul(31, h) + str.charCodeAt(i)) | 0;
-  return h >>> 0;
-}
-
-function mulberry32(seed) {
-  let a = seed;
-  return function () {
-    a |= 0;
-    a = (a + 0x6d2b79f5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-function pick(rand, arr) { return arr[Math.floor(rand() * arr.length)]; }
-
-const SKIN_TONES = ["#F4C89B", "#E3AC7C", "#C68863", "#8D5A34", "#FFDCB2"];
-const HAIR_COLORS = ["#2B1B12", "#4A2E1E", "#1C1C1C", "#6B3F23", "#5C4033"];
-const SUIT_COLORS = ["#2B3A55", "#33424F", "#3B3B3B", "#41474D", "#2E3D3B"];
-const HAIR_STYLES_BY_GENDER = { male: ["short"], female: ["long", "bun", "short"] };
-
-function generatePerson(name, gender = "female") {
-  const rand = mulberry32(hashString(name));
-  const styles = HAIR_STYLES_BY_GENDER[gender] || HAIR_STYLES_BY_GENDER.female;
-  return {
-    skin: pick(rand, SKIN_TONES),
-    hair: pick(rand, HAIR_COLORS),
-    suit: pick(rand, SUIT_COLORS),
-    style: pick(rand, styles),
-    beard: gender === "male" && rand() > 0.45,
-  };
-}
-
-function HairBack({ style, color }) {
-  if (style === "long") {
-    return (
-      <>
-        <ellipse cx="28" cy="19" rx="14" ry="15" fill={color} />
-        <path d="M15,17 Q13,29 16,41 Q18,43 20,41 Q17,29 19,18 Z" fill={color} />
-        <path d="M41,17 Q43,29 40,41 Q38,43 36,41 Q39,29 37,18 Z" fill={color} />
-      </>
-    );
-  }
-  if (style === "bun") {
-    return (
-      <>
-        <ellipse cx="28" cy="18" rx="12.5" ry="11.5" fill={color} />
-        <circle cx="28" cy="8.5" r="4" fill={color} />
-      </>
-    );
-  }
-  return <ellipse cx="28" cy="18.5" rx="12.5" ry="11.5" fill={color} />;
-}
-
-function HairFront({ style, color }) {
-  if (style === "long") return <path d="M16,15 Q22,7 30,8.5 Q37,9.5 40,16 Q34,11 28,11.5 Q21,12 16,15 Z" fill={color} />;
-  if (style === "bun") return <path d="M17,15 Q23,8.5 30,9 Q36,9.5 39,15.5 Q33,11.5 28,11.5 Q22,11.5 17,15 Z" fill={color} />;
-  return <path d="M17,14.5 Q23,7.5 31,8.5 Q37,9.5 39,15 Q33,10.5 28,10.5 Q22,10.5 17,14.5 Z" fill={color} />;
-}
-
-function Avatar({ name, accent, gender, size = 56 }) {
-  const p = useMemo(() => generatePerson(name, gender), [name, gender]);
-  const gid = useMemo(() => `skin-${name.replace(/\s+/g, "-").toLowerCase()}`, [name]);
-
-  return (
-    <div className="avatar" style={{ width: size, height: size }} aria-hidden="true">
-      <svg viewBox="0 0 56 56" width={size} height={size}>
-        <defs>
-          <radialGradient id={gid} cx="38%" cy="32%" r="75%">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.55" />
-            <stop offset="35%" stopColor={p.skin} stopOpacity="0" />
-            <stop offset="100%" stopColor="#000000" stopOpacity="0.08" />
-          </radialGradient>
-        </defs>
-        <circle cx="28" cy="28" r="28" fill="#EEF2F0" />
-        <path d="M3,56 C3,41 14,35 28,35 C42,35 53,41 53,56 Z" fill={p.suit} />
-        <path d="M22,37 L28,45 L25,35 Z" fill="#F7F7F5" />
-        <path d="M34,37 L28,45 L31,35 Z" fill="#F7F7F5" />
-        <path d="M26.5,38 L29.5,38 L31,49 L28,53 L25,49 Z" fill={accent} />
-        {p.style === "long" && <HairBack style={p.style} color={p.hair} />}
-        <rect x="24" y="28" width="8" height="10" rx="3" fill={p.skin} />
-        {p.style !== "long" && <HairBack style={p.style} color={p.hair} />}
-        {p.style === "long" && <ellipse cx="28" cy="19" rx="14" ry="15" fill={p.hair} />}
-        <circle cx="28" cy="23.5" r="11.5" fill={p.skin} />
-        <circle cx="28" cy="23.5" r="11.5" fill={`url(#${gid})`} />
-        <HairFront style={p.style} color={p.hair} />
-        <path d="M20,21.5 Q23,20 26,21.3" stroke={p.hair} strokeWidth="1.3" fill="none" strokeLinecap="round" />
-        <path d="M30,21.3 Q33,20 36,21.5" stroke={p.hair} strokeWidth="1.3" fill="none" strokeLinecap="round" />
-        <ellipse cx="23.5" cy="24.5" rx="1.5" ry="1.9" fill="#2A2118" />
-        <ellipse cx="32.5" cy="24.5" rx="1.5" ry="1.9" fill="#2A2118" />
-        <circle cx="24" cy="23.9" r="0.5" fill="#fff" />
-        <circle cx="33" cy="23.9" r="0.5" fill="#fff" />
-        {p.beard ? (
-          <path d="M17,24 Q17,33 28,34 Q39,33 39,24 Q39,30 34,32 Q31,33 28,33 Q25,33 22,32 Q17,30 17,24 Z" fill={p.hair} opacity="0.92" />
-        ) : (
-          <path d="M24.5,29 Q28,31.5 31.5,29" stroke="#8A5A3E" strokeWidth="1.2" fill="none" strokeLinecap="round" />
-        )}
-      </svg>
-    </div>
-  );
-}
-
-function Stars({ value, size = 14 }) {
-  const full = Math.floor(value);
-  const half = value - full >= 0.5;
-  return (
-    <span className="stars" aria-label={`${value} out of 5 stars`}>
-      {Array.from({ length: 5 }).map((_, i) => {
-        const filled = i < full || (i === full && half);
-        return (
-          <Star key={i} size={size} fill={filled ? "var(--amber)" : "none"} stroke={filled ? "var(--amber)" : "var(--line)"} strokeWidth={1.5} />
-        );
-      })}
-    </span>
-  );
-}
-
-function InstructorCard({ instructor, onOpenReviews }) {
-  return (
-    <div className="instructor-card" style={{ "--accent": instructor.accent }}>
-      <div className="card-top">
-        <Avatar name={instructor.name} accent={instructor.accent} gender={instructor.gender} />
-        <div>
-          <h3 className="i-name">{instructor.name}</h3>
-          <p className="i-subject">{instructor.subject}</p>
-        </div>
-      </div>
-
-      <div className="rating-row">
-        <Stars value={instructor.rating} />
-        <span className="rating-num">{instructor.rating.toFixed(1)}</span>
-        <button className="review-link" onClick={() => onOpenReviews(instructor)}>
-          {instructor.reviews.length} reviews
-        </button>
-      </div>
-
-      <div className="contact-block">
-        <a className="contact-row" href={`mailto:${instructor.email}`}><Mail size={15} />{instructor.email}</a>
-        <a className="contact-row" href={`tel:${instructor.phone.replace(/\s/g, "")}`}><Phone size={15} />{instructor.phone}</a>
-      </div>
-    </div>
-  );
-}
-
-function ReviewsDrawer({ instructor, onClose }) {
-  return (
-    <div className="overlay" onClick={onClose}>
-      <div
-        className="drawer"
-        style={{ "--accent": instructor.accent }}
-        onClick={(e) => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-label={`Reviews for ${instructor.name}`}
-      >
-        <button className="close-btn" onClick={onClose} aria-label="Close"><X size={18} /></button>
-
-        <div className="drawer-head">
-          <Avatar name={instructor.name} accent={instructor.accent} gender={instructor.gender} size={52} />
-          <div>
-            <h2>{instructor.name}</h2>
-            <p className="i-subject">{instructor.subject}</p>
-          </div>
-        </div>
-
-        <div className="rating-row" style={{ marginBottom: 26 }}>
-          <Stars value={instructor.rating} size={16} />
-          <span className="rating-num">{instructor.rating.toFixed(1)}</span>
-          <span className="rating-count">({instructor.reviews.length} reviews)</span>
-        </div>
-
-        <h4 className="section-label">What parents say</h4>
-        <div className="reviews-list">
-          {instructor.reviews.map((r, i) => (
-            <div className="review-item" key={i}>
-              <div className="review-top">
-                <span className="review-name">{r.name}</span>
-                <Stars value={r.rating} size={13} />
-              </div>
-              <p className="review-text">{r.text}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function InstructorsPage({ onNavigate }) {
-  const [active, setActive] = useState(null);
-
-  return (
-    <>
-      <section className="wrap mid intro">
-        <button className="back-link" onClick={() => onNavigate("home")}>
-          <ArrowLeft size={14} /> Back to home
-        </button>
-        <div style={{ marginTop: 22 }}>
-          <span className="eyebrow">Meet the team</span>
-          <h1>Instructors who make it click</h1>
-          <p>Every course is led by a real instructor — here's who's teaching, how they're rated, and how to reach them.</p>
-        </div>
-      </section>
-      <p className="wrap mid sample-note">
-        Sample profiles for demonstration — replace names, contact details and reviews with your real instructors' information before publishing.
-      </p>
-
-      <div className="wrap mid instructor-grid">
-        {INSTRUCTORS.map((inst) => (
-          <InstructorCard key={inst.id} instructor={inst} onOpenReviews={setActive} />
-        ))}
-      </div>
-
-      <div className="wrap mid" style={{ paddingBottom: 70, textAlign: "center" }}>
-        <button className="cta-btn" onClick={() => onNavigate("apply")}>
-          Want to join them? Apply to teach <ArrowRight size={16} />
-        </button>
-      </div>
-
-      {active && <ReviewsDrawer instructor={active} onClose={() => setActive(null)} />}
-    </>
-  );
-}
-
-/* ============================================================================
-   APPLY PAGE
-   ============================================================================ */
-
-// Formspree endpoint — submissions post here first. If that request fails
-// for any reason (offline, blocked, endpoint issue), the form automatically
-// falls back to opening a pre-filled email instead, so the application is
-// never lost either way.
-const FORMSPREE_ENDPOINT = "https://formspree.io/f/xqpzdkjz";
-const APPLY_EMAIL = "ayaahmedd777@gmail.com";
-
-const SUBJECTS = [
-  { id: "ai", icon: "🤖", title: "AI & Smart Technology" },
-  { id: "python", icon: "🐍", title: "Programming & Python" },
-  { id: "canva", icon: "🎨", title: "Canva & Creative Design" },
-  { id: "english", icon: "🇬🇧", title: "English Communication & Conversation" },
-  { id: "scratch", icon: "🎮", title: "Scratch & Game Development" },
-  { id: "other", icon: "✨", title: "Something else" },
-];
-
-const EXPERIENCE_OPTIONS = ["Less than 1 year", "1–3 years", "3–5 years", "5+ years"];
-const AVAILABILITY_OPTIONS = ["Weekday mornings", "Weekday evenings", "Weekends", "Flexible"];
-
-const EMPTY_FORM = {
-  name: "", email: "", phone: "", subject: "", subjectOther: "",
-  experience: "", availability: "", message: "", cv: null, portfolio: null, agree: false,
-};
-
-function buildApplicationText(form, subjectLabel) {
-  return [
-    "New Instructor Application — SparkLab Academy",
-    "",
-    `Name: ${form.name}`,
-    `Email: ${form.email}`,
-    `Phone: ${form.phone}`,
-    `Subject to teach: ${subjectLabel}`,
-    `Experience: ${form.experience}`,
-    `Availability: ${form.availability}`,
-    "",
-    "Why they want to join:",
-    form.message,
-    "",
-    `CV file: ${form.cv ? form.cv.name : "Not attached"}`,
-    `Portfolio file: ${form.portfolio ? form.portfolio.name : "Not attached"}`,
-  ].join("\n");
-}
-
-function Field({ label, required, children, error }) {
-  return (
-    <label className="field">
-      <span className="field-label">{label} {required && <span className="req">*</span>}</span>
-      {children}
-      {error && <span className="field-error">{error}</span>}
-    </label>
-  );
-}
-
-function ApplyPage({ onNavigate }) {
-  const formRef = useRef(null);
-
-  const [form, setForm] = useState(EMPTY_FORM);
-  const [showErrors, setShowErrors] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [formKey, setFormKey] = useState(0);
-
-  const [submitting, setSubmitting] = useState(false);
-  const [succeeded, setSucceeded] = useState(false);
-  const [usedFallback, setUsedFallback] = useState(false);
-
-  function update(key, value) { setForm((f) => ({ ...f, [key]: value })); }
-
-  const isValid =
-    form.name.trim() && form.email.trim() && form.phone.trim() && form.subject &&
-    (form.subject !== "other" || form.subjectOther.trim()) &&
-    form.experience && form.availability && form.message.trim() && form.cv && form.agree;
-
-  const subjectLabel =
-    form.subject === "other" ? form.subjectOther || "General" : SUBJECTS.find((s) => s.id === form.subject)?.title || "General";
-
-  const applicationText = useMemo(() => buildApplicationText(form, subjectLabel), [form, subjectLabel]);
-
-  const mailtoHref = useMemo(() => {
-    const subjectLine = `Instructor Application — ${subjectLabel} — ${form.name || "Applicant"}`;
-    return `mailto:${APPLY_EMAIL}?subject=${encodeURIComponent(subjectLine)}&body=${encodeURIComponent(applicationText)}`;
-  }, [applicationText, subjectLabel, form.name]);
-
-  async function handleSubmit(e) {
-    e.preventDefault();
-    if (!isValid) { setShowErrors(true); return; }
-
-    setSubmitting(true);
-    try {
-      const fd = new FormData(formRef.current);
-      const res = await fetch(FORMSPREE_ENDPOINT, { method: "POST", body: fd, headers: { Accept: "application/json" } });
-      if (res.ok) { setUsedFallback(false); setSucceeded(true); }
-      else throw new Error(`Formspree responded with ${res.status}`);
-    } catch (err) {
-      window.location.href = mailtoHref;
-      setUsedFallback(true);
-      setSucceeded(true);
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  async function copyApplication() {
-    try {
-      await navigator.clipboard.writeText(applicationText);
-    } catch {
-      const ta = document.createElement("textarea");
-      ta.value = applicationText;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      document.body.removeChild(ta);
-    }
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }
-
-  function startOver() {
-    setForm(EMPTY_FORM);
-    setShowErrors(false);
-    setSucceeded(false);
-    setUsedFallback(false);
-    setFormKey((k) => k + 1);
-  }
-
-  return (
-    <>
-      <section className="wrap narrow intro">
-        <button className="back-link" onClick={() => onNavigate("home")}>
-          <ArrowLeft size={14} /> Back to home
-        </button>
-        <div style={{ marginTop: 22 }}>
-          <span className="eyebrow">Join the team</span>
-          <h1>Apply to teach at SparkLab Academy</h1>
-          <p>Tell us about yourself and what you'd like to teach. We'll get your application either way — no email app required, but it's there as a backup.</p>
-        </div>
-      </section>
-
-      <div className="wrap narrow">
-        {!succeeded ? (
-          <form className="form-card" key={formKey} ref={formRef} onSubmit={handleSubmit} noValidate>
-            <div className="form-grid">
-              <Field label="Full name" required error={showErrors && !form.name.trim() ? "Please enter your name" : null}>
-                <input type="text" name="name" className={showErrors && !form.name.trim() ? "err" : ""} value={form.name} onChange={(e) => update("name", e.target.value)} placeholder="Your name" />
-              </Field>
-
-              <Field label="Email" required error={showErrors && !form.email.trim() ? "Please enter your email" : null}>
-                <input type="email" name="email" className={showErrors && !form.email.trim() ? "err" : ""} value={form.email} onChange={(e) => update("email", e.target.value)} placeholder="you@example.com" />
-              </Field>
-
-              <Field label="Phone" required error={showErrors && !form.phone.trim() ? "Please enter your phone number" : null}>
-                <input type="tel" name="phone" className={showErrors && !form.phone.trim() ? "err" : ""} value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="+20 1xx xxx xxxx" />
-              </Field>
-
-              <Field label="Subject you'd like to teach" required error={showErrors && !form.subject ? "Please choose a subject" : null}>
-                <select className={showErrors && !form.subject ? "err" : ""} value={form.subject} onChange={(e) => update("subject", e.target.value)}>
-                  <option value="">Select a subject</option>
-                  {SUBJECTS.map((s) => (<option key={s.id} value={s.id}>{s.icon} {s.title}</option>))}
-                </select>
-                <input type="hidden" name="subject" value={subjectLabel} />
-              </Field>
-
-              {form.subject === "other" && (
-                <Field label="What subject?" required error={showErrors && !form.subjectOther.trim() ? "Please tell us what you'd like to teach" : null}>
-                  <input type="text" name="subject_other" className={showErrors && !form.subjectOther.trim() ? "err" : ""} value={form.subjectOther} onChange={(e) => update("subjectOther", e.target.value)} placeholder="e.g. Robotics" />
-                </Field>
-              )}
-
-              <Field label="Years of relevant experience" required error={showErrors && !form.experience ? "Please select your experience" : null}>
-                <select name="experience" className={showErrors && !form.experience ? "err" : ""} value={form.experience} onChange={(e) => update("experience", e.target.value)}>
-                  <option value="">Select a range</option>
-                  {EXPERIENCE_OPTIONS.map((o) => (<option key={o} value={o}>{o}</option>))}
-                </select>
-              </Field>
-
-              <Field label="Availability" required error={showErrors && !form.availability ? "Please select your availability" : null}>
-                <select name="availability" className={showErrors && !form.availability ? "err" : ""} value={form.availability} onChange={(e) => update("availability", e.target.value)}>
-                  <option value="">Select availability</option>
-                  {AVAILABILITY_OPTIONS.map((o) => (<option key={o} value={o}>{o}</option>))}
-                </select>
-              </Field>
-
-              <div className="field full">
-                <Field label="Why do you want to join SparkLab Academy?" required error={showErrors && !form.message.trim() ? "Please tell us why you'd like to join" : null}>
-                  <textarea name="message" className={showErrors && !form.message.trim() ? "err" : ""} value={form.message} onChange={(e) => update("message", e.target.value)} placeholder="Tell us about your teaching experience and why you'd be a good fit..." />
-                </Field>
-              </div>
-
-              <Field label="CV / resume" required error={showErrors && !form.cv ? "Please attach your CV" : null}>
-                <input type="file" name="cv" accept=".pdf,.doc,.docx" className={showErrors && !form.cv ? "err" : ""} onChange={(e) => update("cv", e.target.files?.[0] || null)} />
-                <span className="field-hint">{form.cv ? form.cv.name : "PDF or Word"}</span>
-              </Field>
-
-              <Field label="Portfolio (optional)">
-                <input type="file" name="portfolio" accept=".pdf,.doc,.docx,.zip,.ppt,.pptx" onChange={(e) => update("portfolio", e.target.files?.[0] || null)} />
-                <span className="field-hint">{form.portfolio ? form.portfolio.name : "Samples of your work, e.g. slides, projects, videos"}</span>
-              </Field>
-
-              <input type="hidden" name="_subject" value={`Instructor Application — ${subjectLabel} — ${form.name || "Applicant"}`} />
-            </div>
-
-            <div className="divider" />
-
-            <div className="checkbox-row">
-              <input type="checkbox" id="agree" checked={form.agree} onChange={(e) => update("agree", e.target.checked)} />
-              <label htmlFor="agree">
-                I agree to be contacted by SparkLab Academy about this application.
-                {showErrors && !form.agree && <span className="field-error"> — please confirm to continue</span>}
-              </label>
-            </div>
-
-            <div className="submit-row">
-              <button type="submit" className="cta-btn" disabled={submitting}>
-                {submitting ? <Loader2 size={16} className="spin" /> : <Send size={16} />}
-                {submitting ? "Sending…" : "Send application"}
-              </button>
-              <button type="button" className="cta-btn outline" onClick={copyApplication}>
-                {copied ? <Check size={16} /> : <Copy size={16} />}
-                {copied ? "Copied" : "Copy instead"}
-              </button>
-            </div>
-
-            <p className="direct-note">
-              If sending doesn't go through, this automatically opens a pre-filled email to <a href={`mailto:${APPLY_EMAIL}`}>{APPLY_EMAIL}</a> instead — your application is never lost.
-            </p>
-          </form>
-        ) : (
-          <div className="success-card">
-            <div className="success-icon"><Mail size={22} /></div>
-            <h2>{usedFallback ? "Your email app should be opening now" : "Application received"}</h2>
-            <p>
-              {usedFallback
-                ? `We couldn't reach our form service, so we've filled a new email to ${APPLY_EMAIL} with your details — just review it and hit send.`
-                : `Thanks for applying — your details${form.cv ? " and CV" : ""}${form.portfolio ? " and portfolio" : ""} have been sent to our team. We'll be in touch.`}
-            </p>
-            {usedFallback && (
-              <div className="fallback-note">
-                <AlertTriangle size={16} />
-                <span>Files can't travel through email links automatically — please attach your CV{form.portfolio ? " and portfolio" : ""} to the email yourself before sending.</span>
-              </div>
-            )}
-            <div className="success-actions">
-              <button type="button" className="cta-btn outline" onClick={copyApplication}>
-                {copied ? <Check size={16} /> : <Copy size={16} />}
-                {copied ? "Copied" : "Copy application text"}
-              </button>
-              <button type="button" className="cta-btn outline" onClick={startOver}>
-                <RotateCcw size={15} /> Start a new application
-              </button>
-              <button type="button" className="cta-btn outline" onClick={() => onNavigate("home")}>
-                Back to home
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-    </>
-  );
-}
-
-/* ============================================================================
-   LEVEL TEST PAGE
-   ============================================================================ */
-
-const LEVEL_TEST_COURSES = [
-  { id: "ai", icon: "🤖", title: "AI & Smart Technology", accent: "var(--periwinkle)" },
-  { id: "python", icon: "🐍", title: "Programming & Python", accent: "var(--teal)" },
-  { id: "canva", icon: "🎨", title: "Canva & Creative Design", accent: "var(--coral)" },
-  { id: "english", icon: "🇬🇧", title: "English Communication", accent: "var(--amber)" },
-  { id: "scratch", icon: "🎮", title: "Scratch & Game Dev", accent: "var(--teal)" },
-];
-
-// Python maps to the real 4-level curriculum, scored out of 15.
-const PYTHON_QUIZ = {
-  max: 15,
-  questions: [
-    {
-      q: "Have you written any code before?",
-      options: [
-        { t: "Never", v: 0 },
-        { t: "A little, in block tools like Scratch", v: 1 },
-        { t: "Yes, simple Python scripts", v: 2 },
-        { t: "Yes, I'm comfortable with loops & functions", v: 3 },
-      ],
-    },
-    {
-      q: "What does a variable do?",
-      options: [
-        { t: "Not sure", v: 0 },
-        { t: "I have a vague idea", v: 1 },
-        { t: "It stores a value you can reuse", v: 2 },
-        { t: "I could explain it with an example", v: 3 },
-      ],
-    },
-    {
-      q: "Can you read simple if / else logic?",
-      options: [
-        { t: "No", v: 0 },
-        { t: "A little", v: 1 },
-        { t: "Yes, I can follow it", v: 2 },
-        { t: "Yes, and I can write it myself", v: 3 },
-      ],
-    },
-    {
-      q: "Have you used loops (for / while)?",
-      options: [
-        { t: "Never heard of them", v: 0 },
-        { t: "Heard of them", v: 1 },
-        { t: "Used them a bit", v: 2 },
-        { t: "Use them comfortably", v: 3 },
-      ],
-    },
-    {
-      q: "Have you built even a tiny project — a game, calculator, script?",
-      options: [
-        { t: "No", v: 0 },
-        { t: "Followed a tutorial", v: 1 },
-        { t: "Built something small on my own", v: 2 },
-        { t: "Built and debugged my own project", v: 3 },
-      ],
-    },
-  ],
-  levels: [
-    {
-      max: 3,
-      name: "Level 1 — Foundations",
-      blurb: "You're starting fresh, and that's exactly where this level begins.",
-      points: ["How programs think: logic & sequence", "Variables and data types", "Getting input, printing output"],
-    },
-    {
-      max: 7,
-      name: "Level 2 — Control Flow",
-      blurb: "You've got the basics. You'll move quickly into decisions and loops.",
-      points: ["If / else decisions", "For and while loops", "Debugging: reading error messages"],
-    },
-    {
-      max: 11,
-      name: "Level 3 — Data Structures",
-      blurb: "Solid fundamentals. You're ready to organize real data.",
-      points: ["Lists and indexing", "Dictionaries", "Combining data to model real things"],
-    },
-    {
-      max: 15,
-      name: "Level 4 — Build a Project",
-      blurb: "You already think like a programmer. Time to ship something.",
-      points: ["Writing functions", "Planning a mini project", "Ship it: a quiz game or calculator"],
-    },
-  ],
-};
-
-// Other courses aren't live yet, so this is a lighter readiness/curiosity check
-// scored out of 8, mapped to the three age tiers rather than curriculum levels.
-const READINESS_BANDS = [
-  { max: 3, name: "Explorer", blurb: "Perfect place to start — playful, visual, hands-on lessons." },
-  { max: 6, name: "Builder", blurb: "You've got a head start. Expect to move quickly into guided projects." },
-  { max: 8, name: "Creator", blurb: "You're ready to dive in — expect independent, project-driven work." },
-];
-
-const READINESS_QUIZZES = {
-  ai: [
-    { q: "Do you know what AI is used for?", options: [{ t: "Not really", v: 0 }, { t: "Heard of it, like chatbots", v: 1 }, { t: "Used AI tools before", v: 2 }] },
-    { q: "Are you comfortable trying new apps or tools on your own?", options: [{ t: "I need help", v: 0 }, { t: "Sometimes", v: 1 }, { t: "Yes, I explore on my own", v: 2 }] },
-    { q: "Are you curious about how computers make decisions?", options: [{ t: "Not sure", v: 0 }, { t: "A little curious", v: 1 }, { t: "Very curious, I ask a lot of questions", v: 2 }] },
-    { q: "Have you used a creative AI tool — image or chat — before?", options: [{ t: "No", v: 0 }, { t: "Once or twice", v: 1 }, { t: "Yes, a few times", v: 2 }] },
-  ],
-  canva: [
-    { q: "Have you ever made a poster, slide, or social post?", options: [{ t: "No", v: 0 }, { t: "For school, once", v: 1 }, { t: "Yes, a few times", v: 2 }] },
-    { q: "Are you comfortable picking colors and fonts that go together?", options: [{ t: "Not really", v: 0 }, { t: "A bit", v: 1 }, { t: "Yes", v: 2 }] },
-    { q: "Have you used Canva or a similar design app?", options: [{ t: "Never", v: 0 }, { t: "Tried it once", v: 1 }, { t: "Use it sometimes", v: 2 }] },
-    { q: "Do you enjoy drawing or arranging things visually?", options: [{ t: "Not much", v: 0 }, { t: "Sometimes", v: 1 }, { t: "Yes, I love it", v: 2 }] },
-  ],
-  english: [
-    { q: "How comfortable are you speaking English in a group?", options: [{ t: "Shy about it", v: 0 }, { t: "Okay with some practice", v: 1 }, { t: "Comfortable", v: 2 }] },
-    { q: "Do you read English books or shows without much help?", options: [{ t: "No", v: 0 }, { t: "Sometimes", v: 1 }, { t: "Yes", v: 2 }] },
-    { q: "Can you tell a short story out loud in English?", options: [{ t: "Hard for me", v: 0 }, { t: "With some effort", v: 1 }, { t: "Yes", v: 2 }] },
-    { q: "Have you given a presentation in English before?", options: [{ t: "No", v: 0 }, { t: "Once", v: 1 }, { t: "Yes, more than once", v: 2 }] },
-  ],
-  scratch: [
-    { q: "Have you used Scratch or a similar block-coding tool?", options: [{ t: "Never", v: 0 }, { t: "Once or twice", v: 1 }, { t: "Yes, made something", v: 2 }] },
-    { q: "Do you enjoy figuring out how games work?", options: [{ t: "Not really", v: 0 }, { t: "A bit", v: 1 }, { t: "Yes, a lot", v: 2 }] },
-    { q: "Are you comfortable with drag-and-drop and trial and error?", options: [{ t: "Not really", v: 0 }, { t: "Sometimes", v: 1 }, { t: "Yes", v: 2 }] },
-    { q: "Have you ever finished making something — a story, animation, or game?", options: [{ t: "No", v: 0 }, { t: "Started but didn't finish", v: 1 }, { t: "Yes, finished one", v: 2 }] },
-  ],
-};
-
-function getQuiz(courseId) {
-  if (courseId === "python") return { questions: PYTHON_QUIZ.questions, max: PYTHON_QUIZ.max };
-  return { questions: READINESS_QUIZZES[courseId], max: READINESS_QUIZZES[courseId].length * 2 };
-}
-
-function getResult(courseId, score) {
-  if (courseId === "python") {
-    return PYTHON_QUIZ.levels.find((l) => score <= l.max) || PYTHON_QUIZ.levels[PYTHON_QUIZ.levels.length - 1];
-  }
-  return READINESS_BANDS.find((b) => score <= b.max) || READINESS_BANDS[READINESS_BANDS.length - 1];
-}
-
-function ScoreDial({ percent, accent }) {
-  const r = 54;
-  const c = 2 * Math.PI * r;
-  const offset = c - (percent / 100) * c;
-  return (
-    <svg width="132" height="132" viewBox="0 0 132 132" className="dial">
-      <circle cx="66" cy="66" r={r} fill="none" stroke="var(--line)" strokeWidth="10" />
-      <circle
-        cx="66" cy="66" r={r} fill="none" stroke={accent} strokeWidth="10" strokeLinecap="round"
-        strokeDasharray={c} strokeDashoffset={offset} transform="rotate(-90 66 66)" className="dial-fill"
-      />
-      <text x="66" y="72" textAnchor="middle" className="dial-text">{percent}%</text>
-    </svg>
-  );
-}
-
-function QuizPanel({ course, onDone, onExit }) {
-  const quiz = useMemo(() => getQuiz(course.id), [course.id]);
-  const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState([]);
-
-  const question = quiz.questions[step];
-  const progress = Math.round((step / quiz.questions.length) * 100);
-
-  function choose(value) {
-    const next = [...answers, value];
-    if (step + 1 < quiz.questions.length) {
-      setAnswers(next);
-      setStep(step + 1);
-    } else {
-      const total = next.reduce((a, b) => a + b, 0);
-      onDone(total, quiz.max);
-    }
-  }
-
-  return (
-    <div className="quiz-card" style={{ "--accent": course.accent }}>
-      <div className="quiz-top">
-        <button className="text-btn" onClick={onExit}><ArrowLeft size={15} /> Change course</button>
-        <span className="quiz-count">Question {step + 1} of {quiz.questions.length}</span>
-      </div>
-      <div className="progress-track">
-        <div className="progress-fill" style={{ width: `${progress}%` }} />
-      </div>
-
-      <h3 className="question">{question.q}</h3>
-      <div className="options">
-        {question.options.map((opt, i) => (
-          <button className="option-btn" key={i} onClick={() => choose(opt.v)}>{opt.t}</button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function ResultPanel({ course, score, max, onRetake, onExit }) {
-  const result = getResult(course.id, score);
-  const percent = Math.round((score / max) * 100);
-  const isPython = course.id === "python";
-
-  return (
-    <div className="quiz-card result-card" style={{ "--accent": course.accent }}>
-      <div className="quiz-top">
-        <button className="text-btn" onClick={onExit}><ArrowLeft size={15} /> Change course</button>
-      </div>
-
-      <div className="result-head">
-        <ScoreDial percent={percent} accent={course.accent} />
-        <div>
-          <span className="result-eyebrow"><Sparkles size={13} /> Your level</span>
-          <h2 className="result-name">{result.name}</h2>
-        </div>
-      </div>
-
-      <p className="result-blurb">{result.blurb}</p>
-
-      {isPython && (
-        <>
-          <h4 className="section-label">You'll start with</h4>
-          <ul className="preview-list">
-            {result.points.map((p, i) => (<li key={i}><span className="preview-dot" />{p}</li>))}
-          </ul>
-        </>
-      )}
-
-      <div className="result-actions">
-        <button className="cta-btn">Explore {course.title}</button>
-        <button className="cta-btn outline" onClick={onRetake}><RotateCcw size={15} /> Retake test</button>
-      </div>
-    </div>
-  );
-}
-
-function LevelTestPage({ onNavigate }) {
-  const [activeCourse, setActiveCourse] = useState(null);
-  const [result, setResult] = useState(null); // { score, max }
-
-  function selectCourse(course) {
-    setActiveCourse(course);
-    setResult(null);
-  }
-
-  return (
-    <>
-      <section className="wrap narrow intro">
-        <button className="back-link" onClick={() => onNavigate("home")}>
-          <ArrowLeft size={14} /> Back to home
-        </button>
-        <div style={{ marginTop: 22 }}>
-          <span className="eyebrow">2-minute check</span>
-          <h1>Find your level before you start</h1>
-          <p>Pick a course below and answer a few quick questions. We'll tell you exactly where to begin — no guesswork.</p>
-        </div>
-      </section>
-
-      <div className="wrap narrow course-picker">
-        {LEVEL_TEST_COURSES.map((c) => (
-          <button
-            key={c.id}
-            className={"course-chip" + (activeCourse?.id === c.id ? " active" : "")}
-            style={{ "--chip-accent": c.accent }}
-            onClick={() => selectCourse(c)}
-          >
-            <span className="chip-icon">{c.icon}</span>
-            {c.title}
-          </button>
-        ))}
-      </div>
-
-      <div className="wrap narrow">
-        {!activeCourse && (
-          <div className="empty-state">Pick a course above to start its level check.</div>
-        )}
-
-        {activeCourse && !result && (
-          <QuizPanel
-            course={activeCourse}
-            onExit={() => setActiveCourse(null)}
-            onDone={(score, max) => setResult({ score, max })}
-          />
-        )}
-
-        {activeCourse && result && (
-          <ResultPanel
-            course={activeCourse}
-            score={result.score}
-            max={result.max}
-            onRetake={() => setResult(null)}
-            onExit={() => { setActiveCourse(null); setResult(null); }}
-          />
-        )}
-      </div>
-    </>
-  );
-}
-
-/* ============================================================================
-   ROOT APP — owns the current page and passes navigation down
+   ROOT APP — owns the current page and passes navigation down.
+   Instructors, Level test, and Apply are rendered from the separately-built
+   files; only Home lives here.
    ============================================================================ */
 
 export default function App() {
@@ -1677,14 +691,28 @@ export default function App() {
   return (
     <div className="app">
       <GlobalStyles />
-      <SiteNav page={page} onNavigate={navigate} />
 
-      {page === "home" && <HomePage onNavigate={navigate} />}
-      {page === "instructors" && <InstructorsPage onNavigate={navigate} />}
-      {page === "level-test" && <LevelTestPage onNavigate={navigate} />}
-      {page === "apply" && <ApplyPage onNavigate={navigate} />}
-
-      <SiteFooter onNavigate={navigate} />
+      {page === "home" ? (
+        <>
+          <SiteNav page={page} onNavigate={navigate} />
+          <HomePage onNavigate={navigate} />
+          <SiteFooter onNavigate={navigate} />
+        </>
+      ) : (
+        // The other pages are self-contained (own nav + styles already built
+        // in their own files) — just add a slim way back to Home above them.
+        <>
+          <div className="back-home-bar">
+            <button className="back-home-pill" onClick={() => navigate("home")}>
+              <HomeIcon size={14} /> Back to home
+            </button>
+          </div>
+          {page === "instructors" && <InstructorsPage />}
+          {page === "level-test" && <LevelTestPage />}
+          {page === "sessions" && <SessionsPage />}
+          {page === "apply" && <ApplyPage />}
+        </>
+      )}
     </div>
   );
 }
