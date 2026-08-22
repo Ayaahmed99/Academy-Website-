@@ -978,14 +978,7 @@ function SiteFooter({ onNavigate }) {
     { label: "Privacy Policy", page: "home" },
   ];
 
-  const handleSubscribe = (e) => {
-    e.preventDefault();
-
-    if (!email.trim()) return;
-
-    console.log("Newsletter subscription:", email);
-    setEmail("");
-  };
+<form onSubmit={handleSubscribe}>
 
   return (
     <footer className="site-footer">
@@ -1483,13 +1476,11 @@ function navigate(nextPage) {
               <HomeIcon size={14} /> Back to home
             </button>
           </div>
-const pages = {
-  instructors: InstructorsPage,
-  "level-test": LevelTestPage,
-  sessions: SessionsPage,
-  booking: BookingPage,
-  apply: ApplyPage,
-};
+{page === "instructors" && <InstructorsPage />}
+{page === "level-test" && <LevelTestPage />}
+{page === "sessions" && <SessionsPage />}
+{page === "booking" && <BookingPage />}
+{page === "apply" && <ApplyPage />}
         </>
       )}
     </div>
