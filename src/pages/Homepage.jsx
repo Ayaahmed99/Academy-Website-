@@ -1447,10 +1447,14 @@ function HomePage({ onNavigate }) {
 export default function App() {
   const [page, setPage] = useState("home");
 
-  function navigate(next) {
-    setPage(next);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
+function navigate(nextPage) {
+  setPage(nextPage);
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+}
 
   return (
     <div className="app">
