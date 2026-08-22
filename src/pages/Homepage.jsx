@@ -218,137 +218,158 @@ function GlobalStyles() {
       .cta-secondary:hover { color: var(--ink); }
 
       /* ---------- footer ---------- */
-      .footer {
-        border-top: 1px solid var(--line); padding: 30px 0; display: flex; justify-content: space-between;
-        align-items: center; font-size: 13.5px; color: var(--ink-soft); flex-wrap: wrap; gap: 14px;
-      }
-      .footer-links { display: flex; gap: 18px; }
-      .footer-links button { background: none; border: none; color: var(--ink-soft); font-weight: 600; font-size: 13.5px; padding: 0; }
-      .footer-links button:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+     /* Example CSS for desktop enhancement */
+.site-footer {
+  background-color: #f8f8f8;
+  padding: 40px 20px;
+  font-family: 'Arial, sans-serif';
+  color: #333;
+}
 
-      /* ---------- HOME: hero / terminal ---------- */
-      .hero { padding: 72px 0 56px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 56px; align-items: center; }
-      @media (max-width: 860px) { .hero { grid-template-columns: 1fr; padding-top: 48px; } }
-      .hero h1 { font-size: clamp(34px, 4.6vw, 52px); line-height: 1.08; font-weight: 700; letter-spacing: -0.01em; }
-      .hero h1 .hl { color: var(--teal); }
-      .hero-sub { margin-top: 20px; font-size: 17px; color: var(--ink-soft); max-width: 46ch; }
-      .hero-ctas { margin-top: 30px; display: flex; gap: 14px; flex-wrap: wrap; }
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
-      .terminal { background: var(--teal-deep); border-radius: 14px; overflow: hidden; box-shadow: 0 20px 50px rgba(10,79,73,0.28); min-height: 220px; }
-      .terminal-bar { display: flex; align-items: center; gap: 7px; padding: 11px 14px; background: rgba(0,0,0,0.15); }
-      .dot { width: 10px; height: 10px; border-radius: 50%; }
-      .terminal-title { margin-left: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: rgba(255,255,255,0.55); }
-      .terminal-body { padding: 22px 20px 26px; font-family: 'JetBrains Mono', monospace; font-size: 14px; min-height: 150px; }
-      .terminal-line { margin-bottom: 8px; }
-      .prompt { color: #7FE0C6; }
-      .out { color: rgba(255,255,255,0.82); padding-left: 2px; }
-      .cursor { color: #7FE0C6; opacity: 0; }
-      .cursor.on { opacity: 1; }
+/* Layout: 4 columns on desktop */
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+}
 
-      .age-strip { padding: 8px 0 60px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-      @media (max-width: 720px) { .age-strip { grid-template-columns: 1fr; } }
-      .age-tier { background: var(--paper-raised); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
-      .age-tier .range { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--teal); font-weight: 500; }
-      .age-tier .label { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 17px; margin-top: 4px; }
-      .age-tier .desc { font-size: 13.5px; color: var(--ink-soft); margin-top: 4px; }
+/* Brand section styling */
+.footer-brand-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
 
-      .section-head { padding-top: 20px; margin-bottom: 34px; }
-      .section-head h2 { font-size: clamp(26px, 3.2vw, 34px); }
-      .section-head p { margin-top: 10px; color: var(--ink-soft); font-size: 15.5px; max-width: 56ch; }
+.footer-logo {
+  width: 150px;
+  margin-bottom: 15px;
+}
 
-      .course-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding-bottom: 70px; }
-      @media (max-width: 920px) { .course-grid { grid-template-columns: repeat(2, 1fr); } }
-      @media (max-width: 620px) { .course-grid { grid-template-columns: 1fr; } }
+.footer-description {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
 
-      .course-card {
-        background: var(--paper-raised); border: 1px solid var(--line); border-top: 3px solid var(--accent);
-        border-radius: 14px; padding: 22px; display: flex; flex-direction: column;
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
-      }
-      .course-card:hover { transform: translateY(-3px); box-shadow: 0 16px 32px rgba(20,48,46,0.08); }
-      .course-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-      .course-icon { font-size: 30px; }
-      .course-icon.big { font-size: 40px; }
+.footer-socials {
+  display: flex;
+  gap: 10px;
+}
 
-      .badge { font-size: 11.5px; font-weight: 600; padding: 4px 9px; border-radius: 100px; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
-      .badge-open { background: rgba(14,110,102,0.12); color: var(--teal-deep); }
-      .badge-soon { background: rgba(20,48,46,0.07); color: var(--ink-soft); }
+.social-icon {
+  font-size: 1.5rem;
+  color: #555;
+  transition: color 0.3s;
+}
 
-      .course-title { font-size: 18.5px; font-weight: 700; margin-bottom: 8px; }
-      .course-tagline { font-size: 14px; color: var(--ink-soft); flex-grow: 1; margin-bottom: 16px; }
-      .course-meta { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-      .age-chip { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; background: rgba(20,48,46,0.06); color: var(--ink-soft); padding: 4px 9px; border-radius: 6px; }
+.social-icon:hover {
+  color: #000;
+}
 
-      .explore-btn {
-        background: transparent; border: 1.5px solid var(--line); color: var(--ink); padding: 10px 14px; border-radius: 8px;
-        font-weight: 600; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px;
-        transition: border-color 0.15s ease, background 0.15s ease;
-      }
-      .explore-btn:hover { border-color: var(--accent); background: rgba(20,48,46,0.03); }
+/* Other sections styling */
+.footer-section h5 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
 
-      .why-strip { border-top: 1px solid var(--line); padding: 46px 0 70px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
-      @media (max-width: 720px) { .why-strip { grid-template-columns: 1fr; } }
-      .why-item .num { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--teal); }
-      .why-item h4 { font-size: 16px; margin-top: 8px; }
-      .why-item p { margin-top: 6px; font-size: 14px; color: var(--ink-soft); }
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 
-      /* Promo band linking to Instructors / Apply / Level-test / Booking pages */
-      .promo-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding-bottom: 70px; }
-      @media (max-width: 1040px) { .promo-strip { grid-template-columns: 1fr 1fr; } }
-      @media (max-width: 620px) { .promo-strip { grid-template-columns: 1fr; } }
-      .promo-card {
-        background: var(--paper-raised); border: 1px solid var(--line); border-radius: 14px; padding: 26px;
-        display: flex; flex-direction: column; gap: 12px; border-top: 3px solid var(--accent);
-      }
-      .promo-card h3 { font-size: 19px; }
-      .promo-card p { font-size: 14px; color: var(--ink-soft); flex-grow: 1; }
+.footer-section li {
+  margin-bottom: 8px;
+}
 
-      /* ---------- OVERLAY / DRAWER (course detail) ---------- */
-      .overlay { position: fixed; inset: 0; background: rgba(10,20,19,0.45); display: flex; justify-content: flex-end; z-index: 50; animation: fadeIn 0.18s ease; }
-      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-      .drawer {
-        background: var(--paper); width: min(480px, 100%); height: 100%; overflow-y: auto; padding: 28px 26px 40px;
-        position: relative; border-left: 3px solid var(--accent); animation: slideIn 0.22s ease;
-      }
-      @keyframes slideIn { from { transform: translateX(24px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-      @media (max-width: 560px) { .drawer { width: 100%; } }
-      .close-btn {
-        position: absolute; top: 20px; right: 20px; background: var(--paper-raised); border: 1px solid var(--line);
-        border-radius: 8px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; color: var(--ink);
-      }
-      .close-btn:hover { border-color: var(--ink); }
-      .drawer-head { display: flex; gap: 14px; align-items: flex-start; margin-top: 6px; margin-bottom: 16px; }
-      .drawer-head h2 { font-size: 22px; margin-bottom: 8px; }
-      .drawer-tagline { font-size: 15px; color: var(--ink-soft); margin-bottom: 22px; }
-      .format-row { display: flex; gap: 18px; flex-wrap: wrap; padding: 14px 16px; background: var(--paper-raised); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 26px; }
-      .format-item { display: flex; align-items: center; gap: 7px; font-size: 13.5px; font-weight: 600; color: var(--teal-deep); }
-      .section-label { font-family: 'JetBrains Mono', monospace; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft); margin-bottom: 14px; }
-      .levels { display: flex; flex-direction: column; gap: 4px; }
-      .level-row { display: flex; gap: 14px; padding: 14px 0; border-top: 1px solid var(--line); }
-      .level-row:first-child { border-top: none; }
-      .level-num { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); font-weight: 600; padding-top: 2px; }
-      .level-name-row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 6px; }
-      .level-name { font-weight: 700; font-size: 14.5px; }
-      .level-sessions { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--ink-soft); white-space: nowrap; }
-      .level-points { margin: 0; padding-left: 18px; font-size: 13.5px; color: var(--ink-soft); display: flex; flex-direction: column; gap: 4px; }
-      .preview-list { list-style: none; margin: 0 0 20px; padding: 0; display: flex; flex-direction: column; gap: 11px; }
-      .preview-list li { display: flex; align-items: center; gap: 10px; font-size: 14.5px; color: var(--ink); }
-      .preview-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
-      .soon-note { font-size: 13px; color: var(--ink-soft); font-style: italic; }
+.footer-section button {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  color: #555;
+  transition: color 0.3s;
+}
 
-      /* ---------- floating "back to home" pill shown on other pages ---------- */
-      .back-home-bar {
-        position: sticky; top: 0; z-index: 40;
-        background: rgba(243,246,244,0.92); backdrop-filter: blur(8px);
-        border-bottom: 1px solid var(--line); padding: 10px 24px;
-      }
-      .back-home-pill {
-        display: inline-flex; align-items: center; gap: 7px; background: var(--paper-raised);
-        border: 1px solid var(--line); border-radius: 100px; padding: 7px 14px 7px 10px;
-        font-size: 13.5px; font-weight: 600; color: var(--ink);
-      }
-      .back-home-pill:hover { border-color: var(--teal); color: var(--teal-deep); }
+.footer-section button:hover {
+  color: #000;
+}
 
+/* Newsletter styling */
+.footer-newsletter {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-newsletter input[type="email"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.footer-newsletter button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  border: none;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.footer-newsletter button:hover {
+  background-color: #0056b3;
+}
+
+/* Bottom section styling */
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 40px;
+  border-top: 1px solid #ddd;
+  padding-top: 20px;
+  font-size: 0.9rem;
+}
+
+.footer-legal button {
+  background: none;
+  border: none;
+  margin-left: 15px;
+  cursor: pointer;
+  color: #555;
+  transition: color 0.3s;
+}
+
+.footer-legal button:hover {
+  color: #000;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
       /* ============================================================
          MOBILE LAYOUT ENHANCEMENTS
          ============================================================ */
