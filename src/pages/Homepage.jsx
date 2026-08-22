@@ -368,8 +368,43 @@ function GlobalStyles() {
         .promo-card { padding: 20px; }
         .drawer { padding: 22px 18px 32px; }
         .format-row { gap: 12px; padding: 12px; }
-        .footer { flex-direction: column; align-items: flex-start; }
-        .footer-links { flex-wrap: wrap; gap: 12px 16px; }
+              /* ---------- FOOTER ---------- */
+      .site-footer {
+        background: var(--ink); color: rgba(243,246,244,0.72); margin-top: 60px;
+      }
+      .footer-top {
+        display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 40px;
+        padding: 52px 24px 40px;
+      }
+      @media (max-width: 860px) {
+        .footer-top { grid-template-columns: 1fr 1fr; }
+      }
+      @media (max-width: 560px) {
+        .footer-top { grid-template-columns: 1fr; gap: 30px; padding: 40px 16px 32px; }
+      }
+      .footer-brand { display: flex; flex-direction: column; gap: 14px; }
+      .footer-logo { height: 42px; width: auto; filter: brightness(0) invert(1); opacity: 0.95; }
+      .footer-tagline { font-size: 13.5px; line-height: 1.6; color: rgba(243,246,244,0.6); max-width: 34ch; }
+      .footer-col { display: flex; flex-direction: column; gap: 11px; }
+      .footer-col h5 {
+        font-family: 'Space Grotesk', sans-serif; font-size: 13px; letter-spacing: 0.04em;
+        text-transform: uppercase; color: rgba(243,246,244,0.85); margin-bottom: 4px;
+      }
+      .footer-col button {
+        background: none; border: none; text-align: left; padding: 0; color: rgba(243,246,244,0.65);
+        font-size: 14px; font-weight: 500; transition: color 0.15s ease;
+      }
+      .footer-col button:hover { color: #fff; }
+      .footer-bottom {
+        border-top: 1px solid rgba(243,246,244,0.14); padding: 20px 24px;
+        display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+        font-size: 12.5px; color: rgba(243,246,244,0.5);
+      }
+      .footer-bottom-links { display: flex; gap: 18px; }
+      .footer-bottom-links button {
+        background: none; border: none; padding: 0; color: rgba(243,246,244,0.5); font-size: 12.5px; font-weight: 500;
+      }
+      .footer-bottom-links button:hover { color: #fff; }
       }
 
       @media (max-width: 400px) {
@@ -423,14 +458,49 @@ function SiteNav({ page, onNavigate }) {
 
 function SiteFooter({ onNavigate }) {
   return (
-    <footer className="wrap footer">
-      <span>© {new Date().getFullYear()} Bright Path</span>
-      <div className="footer-links">
-        <button onClick={() => onNavigate("home")}>Home</button>
-        <button onClick={() => onNavigate("instructors")}>Instructors</button>
-        <button onClick={() => onNavigate("level-test")}>Find your level</button>
-        <button onClick={() => onNavigate("sessions")}>Sessions</button>
-        <button onClick={() => onNavigate("apply")}>Apply to teach</button>
+    <footer className="site-footer">
+      <div className="wrap footer-top">
+        <div className="footer-brand">
+          <img src={LOGO_SRC} alt="Bright Path" className="footer-logo" />
+          <p className="footer-tagline">
+            Live, online courses in code, AI, design and communication —
+            for students aged 6 to 18.
+          </p>
+        </div>
+
+        <div className="footer-col">
+          <h5>Courses</h5>
+          <button onClick={() => onNavigate("home")}>Programming &amp; Python</button>
+          <button onClick={() => onNavigate("home")}>AI &amp; Smart Technology</button>
+          <button onClick={() => onNavigate("home")}>Canva &amp; Creative Design</button>
+          <button onClick={() => onNavigate("home")}>English Communication</button>
+          <button onClick={() => onNavigate("home")}>Scratch &amp; Game Development</button>
+        </div>
+
+        <div className="footer-col">
+          <h5>Get started</h5>
+          <button onClick={() => onNavigate("booking")}>Book a course</button>
+          <button onClick={() => onNavigate("level-test")}>Find your level</button>
+          <button onClick={() => onNavigate("sessions")}>Sessions</button>
+          <button onClick={() => onNavigate("instructors")}>Instructors</button>
+        </div>
+
+        <div className="footer-col">
+          <h5>Company</h5>
+          <button onClick={() => onNavigate("apply")}>Apply to teach</button>
+          <button onClick={() => onNavigate("home")}>About us</button>
+          <button onClick={() => onNavigate("home")}>Contact</button>
+          <button onClick={() => onNavigate("home")}>Privacy policy</button>
+        </div>
+      </div>
+
+      <div className="wrap footer-bottom">
+        <span>© {new Date().getFullYear()} Bright Path. All rights reserved.</span>
+        <span className="footer-bottom-links">
+          <button onClick={() => onNavigate("home")}>Terms</button>
+          <button onClick={() => onNavigate("home")}>Privacy</button>
+          <button onClick={() => onNavigate("home")}>Cookies</button>
+        </span>
       </div>
     </footer>
   );
