@@ -744,7 +744,7 @@ function Terminal() {
         <span className="dot" style={{ background: "#EF6F5C" }} />
         <span className="dot" style={{ background: "#F2A93B" }} />
         <span className="dot" style={{ background: "#3FB68B" }} />
-        <span className="terminal-title">sparklab.py</span>
+        <span className="terminal-title">BrightPath.py</span>
       </div>
       <div className="terminal-body">
         {display.map((l, i) => (
