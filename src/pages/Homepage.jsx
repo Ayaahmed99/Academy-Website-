@@ -1471,11 +1471,13 @@ export default function App() {
               <HomeIcon size={14} /> Back to home
             </button>
           </div>
-          {page === "instructors" && <InstructorsPage />}
-          {page === "level-test" && <LevelTestPage />}
-          {page === "sessions" && <SessionsPage />}
-          {page === "booking" && <BookingPage />}
-          {page === "apply" && <ApplyPage />}
+const pages = {
+  instructors: InstructorsPage,
+  "level-test": LevelTestPage,
+  sessions: SessionsPage,
+  booking: BookingPage,
+  apply: ApplyPage,
+};
         </>
       )}
     </div>
