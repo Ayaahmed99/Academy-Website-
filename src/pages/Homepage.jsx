@@ -618,99 +618,258 @@ function SiteNav({ page, onNavigate }) {
 }
 
 function SiteFooter({ onNavigate }) {
+  const [email, setEmail] = useState("");
   const currentYear = new Date().getFullYear();
 
-  const courseLinks = [
-    { label: "Programming & Python", page: "home" },
-    { label: "AI & Smart Technology", page: "home" },
-    { label: "Canva & Creative Design", page: "home" },
-    { label: "English Communication", page: "home" },
-    { label: "Scratch & Game Development", page: "home" },
-  ];
+  const handleSubscribe = (e) => {
+    e.preventDefault();
 
-  const getStartedLinks = [
-    { label: "Book a Course", page: "booking" },
-    { label: "Find Your Level", page: "level-test" },
+    if (!email.trim()) return;
+
+    // Add your newsletter API / backend here
+    console.log("Newsletter subscription:", email);
+
+    setEmail("");
+  };
+
+  const companyLinks = [
+    { label: "About Us", page: "home" },
+    { label: "Courses", page: "home" },
     { label: "Sessions", page: "sessions" },
     { label: "Instructors", page: "instructors" },
   ];
 
-  const companyLinks = [
-    { label: "Apply to Teach", page: "apply" },
-    { label: "About Us", page: "home" },
-    { label: "Contact", page: "home" },
+  const helpLinks = [
+    { label: "Book a Course", page: "booking" },
+    { label: "Find Your Level", page: "level-test" },
+    { label: "Terms & Conditions", page: "home" },
     { label: "Privacy Policy", page: "home" },
   ];
 
-  const legalLinks = [
-    { label: "Terms", page: "home" },
-    { label: "Privacy", page: "home" },
-    { label: "Cookies", page: "home" },
-  ];
-
-  const renderLinks = (links) =>
-    links.map(({ label, page }) => (
-      <button
-        key={label}
-        type="button"
-        className="footer-link"
-        onClick={() => onNavigate(page)}
-      >
-        {label}
-      </button>
-    ));
-
   return (
-    <footer className="site-footer">
-      <div className="wrap footer-top">
-        {/* Brand */}
-        <div className="footer-brand">
-          <button
-            type="button"
-            className="footer-brand-link"
-            onClick={() => onNavigate("home")}
-            aria-label="Go to Bright Path home"
-          >
-            <img
-              src={LOGO_SRC}
-              alt="Bright Path"
-              className="footer-logo"
-            />
-          </button>
+    <footer className="bg-gray-50 pt-10 sm:pt-16 lg:pt-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-          <p className="footer-tagline">
-            Live, online courses in coding, AI, design, and communication
-            for students aged 6–18.
-          </p>
+        {/* Footer Main Content */}
+        <div className="grid grid-cols-2 gap-x-12 gap-y-16 md:grid-cols-3 lg:grid-cols-6">
+
+          {/* Brand */}
+          <div className="col-span-2 md:col-span-3 lg:col-span-2 lg:pr-8">
+
+            <button
+              type="button"
+              onClick={() => onNavigate("home")}
+              className="inline-flex"
+              aria-label="Go to Bright Path home"
+            >
+              <img
+                src={LOGO_SRC}
+                alt="Bright Path"
+                className="h-10 w-auto"
+              />
+            </button>
+
+            <p className="mt-7 max-w-md text-base leading-relaxed text-gray-600">
+              Live, online courses in coding, AI, design, and communication
+              designed to help students aged 6–18 build skills for the future.
+            </p>
+
+            {/* Social Media */}
+            <ul className="mt-9 flex items-center space-x-3">
+
+              {/* X / Twitter */}
+              <li>
+                <a
+                  href="#"
+                  aria-label="Bright Path on X"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-800 text-white transition-all duration-200 hover:bg-[#0E6E66] focus:bg-[#0E6E66] focus:outline-none focus:ring-2 focus:ring-[#0E6E66] focus:ring-offset-2"
+                >
+                  <svg
+                    className="h-4 w-4"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817-5.964 6.817H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                  </svg>
+                </a>
+              </li>
+
+              {/* Facebook */}
+              <li>
+                <a
+                  href="#"
+                  aria-label="Bright Path on Facebook"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-800 text-white transition-all duration-200 hover:bg-[#0E6E66] focus:bg-[#0E6E66] focus:outline-none focus:ring-2 focus:ring-[#0E6E66] focus:ring-offset-2"
+                >
+                  <svg
+                    className="h-4 w-4"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M13.397 20.997v-8.196h2.765l.411-3.209h-3.176V7.548c0-.926.258-1.56 1.587-1.56h1.684V3.127A22.336 22.336 0 0 0 14.201 3c-2.444 0-4.122 1.492-4.122 4.231v2.355H7.332v3.209h2.753v8.202h3.312z" />
+                  </svg>
+                </a>
+              </li>
+
+              {/* Instagram */}
+              <li>
+                <a
+                  href="#"
+                  aria-label="Bright Path on Instagram"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-800 text-white transition-all duration-200 hover:bg-[#0E6E66] focus:bg-[#0E6E66] focus:outline-none focus:ring-2 focus:ring-[#0E6E66] focus:ring-offset-2"
+                >
+                  <svg
+                    className="h-4 w-4"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M12 7.377a4.623 4.623 0 1 0 0 9.246 4.623 4.623 0 0 0 0-9.246zm0 7.627a3.004 3.004 0 1 1 0-6.008 3.004 3.004 0 0 1 0 6.008z" />
+                    <circle cx="16.806" cy="7.207" r="1.078" />
+                    <path d="M20.533 6.111A4.605 4.605 0 0 0 17.9 3.479a6.606 6.606 0 0 0-2.186-.42C14.751 3.017 14.446 3.005 12 3.005s-2.755 0-3.71.054a6.554 6.554 0 0 0-2.184.42 4.6 4.6 0 0 0-2.633 2.632 6.585 6.585 0 0 0-.419 2.186C3.011 9.26 3 9.565 3 12s.011 2.755.054 3.71c.015.748.156 1.486.419 2.187a4.61 4.61 0 0 0 2.634 2.632 6.584 6.584 0 0 0 2.185.45c.963.042 1.268.055 3.71.055s2.755 0 3.71-.055a6.615 6.615 0 0 0 2.186-.419 4.613 4.613 0 0 0 2.633-2.633c.263-.7.404-1.438.419-2.186.043-.962.056-1.267.056-3.71s0-2.753-.056-3.71a6.581 6.581 0 0 0-.421-2.217z" />
+                  </svg>
+                </a>
+              </li>
+
+              {/* GitHub */}
+              <li>
+                <a
+                  href="#"
+                  aria-label="Bright Path on GitHub"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-800 text-white transition-all duration-200 hover:bg-[#0E6E66] focus:bg-[#0E6E66] focus:outline-none focus:ring-2 focus:ring-[#0E6E66] focus:ring-offset-2"
+                >
+                  <svg
+                    className="h-4 w-4"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      clipRule="evenodd"
+                      d="M12.026 2c-5.509 0-9.974 4.465-9.974 9.974 0 4.406 2.857 8.145 6.821 9.465.499.09.679-.217.679-.481 0-.237-.008-.865-.011-1.696-2.775.602-3.361-1.338-3.361-1.338-.452-1.152-1.107-1.459-1.107-1.459-.905-.619.069-.605.069-.605 1.002.07 1.527 1.028 1.527 1.028.89 1.524 2.336 1.084 2.902.829.091-.645.351-1.085.635-1.334-2.214-.251-4.542-1.107-4.542-4.93 0-1.087.389-1.979 1.024-2.675-.101-.253-.446-1.268.099-2.64 0 0 .837-.269 2.742 1.021a9.582 9.582 0 0 1 2.496-.336 9.554 9.554 0 0 1 2.496.336c1.906-1.291 2.742-1.021 2.742-1.021.545 1.372.203 2.387.099 2.64.64.696 1.024 1.587 1.024 2.675 0 3.833-2.33 4.675-4.552 4.922.355.308.675.916.675 1.846 0 1.334-.012 2.41-.012 2.737 0 .267.178.577.687.479C19.146 20.115 22 16.379 22 11.974 22 6.465 17.535 2 12.026 2z"
+                    />
+                  </svg>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Company */}
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-widest text-gray-400">
+              Company
+            </p>
+
+            <ul className="mt-6 space-y-4">
+              {companyLinks.map(({ label, page }) => (
+                <li key={label}>
+                  <button
+                    type="button"
+                    onClick={() => onNavigate(page)}
+                    className="text-left text-base text-gray-700 transition-all duration-200 hover:text-[#0E6E66] focus:text-[#0E6E66] focus:outline-none"
+                  >
+                    {label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Help */}
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-widest text-gray-400">
+              Help
+            </p>
+
+            <ul className="mt-6 space-y-4">
+              {helpLinks.map(({ label, page }) => (
+                <li key={label}>
+                  <button
+                    type="button"
+                    onClick={() => onNavigate(page)}
+                    className="text-left text-base text-gray-700 transition-all duration-200 hover:text-[#0E6E66] focus:text-[#0E6E66] focus:outline-none"
+                  >
+                    {label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Newsletter */}
+          <div className="col-span-2 md:col-span-1 lg:col-span-2 lg:pl-8">
+            <p className="text-sm font-semibold uppercase tracking-widest text-gray-400">
+              Subscribe to Newsletter
+            </p>
+
+            <p className="mt-4 text-sm leading-relaxed text-gray-500">
+              Get updates about new courses, sessions, and opportunities at
+              Bright Path.
+            </p>
+
+            <form onSubmit={handleSubscribe} className="mt-6">
+              <label htmlFor="footer-email" className="sr-only">
+                Email address
+              </label>
+
+              <input
+                type="email"
+                id="footer-email"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                required
+                className="block w-full rounded-md border border-gray-200 bg-white p-4 text-black placeholder-gray-500 transition-all duration-200 caret-[#0E6E66] focus:border-[#0E6E66] focus:outline-none focus:ring-1 focus:ring-[#0E6E66]"
+              />
+
+              <button
+                type="submit"
+                className="mt-3 inline-flex items-center justify-center rounded-md bg-[#0E6E66] px-6 py-4 font-semibold text-white transition-all duration-200 hover:bg-[#095A54] focus:bg-[#095A54] focus:outline-none focus:ring-2 focus:ring-[#0E6E66] focus:ring-offset-2"
+              >
+                Subscribe
+              </button>
+            </form>
+          </div>
         </div>
 
-        {/* Courses */}
-        <nav className="footer-col" aria-labelledby="footer-courses">
-          <h5 id="footer-courses">Courses</h5>
-          {renderLinks(courseLinks)}
-        </nav>
+        {/* Bottom */}
+        <hr className="mt-16 border-gray-200" />
 
-        {/* Get Started */}
-        <nav className="footer-col" aria-labelledby="footer-get-started">
-          <h5 id="footer-get-started">Get Started</h5>
-          {renderLinks(getStartedLinks)}
-        </nav>
+        <div className="flex flex-col items-center justify-between gap-4 py-8 text-sm text-gray-500 sm:flex-row">
+          <p>
+            © {currentYear} Bright Path. All rights reserved.
+          </p>
 
-        {/* Company */}
-        <nav className="footer-col" aria-labelledby="footer-company">
-          <h5 id="footer-company">Company</h5>
-          {renderLinks(companyLinks)}
-        </nav>
-      </div>
+          <div className="flex items-center gap-6">
+            <button
+              type="button"
+              onClick={() => onNavigate("home")}
+              className="transition-colors hover:text-[#0E6E66]"
+            >
+              Terms
+            </button>
 
-      <div className="wrap footer-bottom">
-        <span>
-          © {currentYear} Bright Path. All rights reserved.
-        </span>
+            <button
+              type="button"
+              onClick={() => onNavigate("home")}
+              className="transition-colors hover:text-[#0E6E66]"
+            >
+              Privacy
+            </button>
 
-        <nav className="footer-bottom-links" aria-label="Legal links">
-          {renderLinks(legalLinks)}
-        </nav>
+            <button
+              type="button"
+              onClick={() => onNavigate("home")}
+              className="transition-colors hover:text-[#0E6E66]"
+            >
+              Cookies
+            </button>
+          </div>
+        </div>
       </div>
     </footer>
   );
