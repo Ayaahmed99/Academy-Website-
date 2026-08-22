@@ -369,42 +369,203 @@ function GlobalStyles() {
         .drawer { padding: 22px 18px 32px; }
         .format-row { gap: 12px; padding: 12px; }
               /* ---------- FOOTER ---------- */
-      .site-footer {
-        background: var(--ink); color: rgba(243,246,244,0.72); margin-top: 60px;
-      }
-      .footer-top {
-        display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 40px;
-        padding: 52px 24px 40px;
-      }
-      @media (max-width: 860px) {
-        .footer-top { grid-template-columns: 1fr 1fr; }
-      }
-      @media (max-width: 560px) {
-        .footer-top { grid-template-columns: 1fr; gap: 30px; padding: 40px 16px 32px; }
-      }
-      .footer-brand { display: flex; flex-direction: column; gap: 14px; }
-      .footer-logo { height: 42px; width: auto; filter: brightness(0) invert(1); opacity: 0.95; }
-      .footer-tagline { font-size: 13.5px; line-height: 1.6; color: rgba(243,246,244,0.6); max-width: 34ch; }
-      .footer-col { display: flex; flex-direction: column; gap: 11px; }
-      .footer-col h5 {
-        font-family: 'Space Grotesk', sans-serif; font-size: 13px; letter-spacing: 0.04em;
-        text-transform: uppercase; color: rgba(243,246,244,0.85); margin-bottom: 4px;
-      }
-      .footer-col button {
-        background: none; border: none; text-align: left; padding: 0; color: rgba(243,246,244,0.65);
-        font-size: 14px; font-weight: 500; transition: color 0.15s ease;
-      }
-      .footer-col button:hover { color: #fff; }
-      .footer-bottom {
-        border-top: 1px solid rgba(243,246,244,0.14); padding: 20px 24px;
-        display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
-        font-size: 12.5px; color: rgba(243,246,244,0.5);
-      }
-      .footer-bottom-links { display: flex; gap: 18px; }
-      .footer-bottom-links button {
-        background: none; border: none; padding: 0; color: rgba(243,246,244,0.5); font-size: 12.5px; font-weight: 500;
-      }
-      .footer-bottom-links button:hover { color: #fff; }
+      /* ---------- FOOTER ---------- */
+
+.site-footer {
+  background: var(--ink);
+  color: rgba(243, 246, 244, 0.72);
+  margin-top: 60px;
+}
+
+/* Footer Layout */
+.footer-top {
+  display: grid;
+  grid-template-columns: 1.6fr repeat(3, 1fr);
+  gap: 40px;
+  padding: 52px 24px 40px;
+}
+
+/* Brand */
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.footer-brand-link {
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.footer-logo {
+  height: 42px;
+  width: auto;
+  display: block;
+  filter: brightness(0) invert(1);
+  opacity: 0.95;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.footer-brand-link:hover .footer-logo {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.footer-brand-link:focus-visible,
+.footer-link:focus-visible,
+.footer-bottom-links button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+  border-radius: 3px;
+}
+
+.footer-tagline {
+  max-width: 34ch;
+  margin: 0;
+  color: rgba(243, 246, 244, 0.6);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+/* Footer Columns */
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 11px;
+}
+
+.footer-col h5 {
+  margin: 0 0 4px;
+
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  text-transform: uppercase;
+
+  color: rgba(243, 246, 244, 0.85);
+}
+
+/* Footer Links */
+.footer-link {
+  display: inline-block;
+
+  background: none;
+  border: none;
+  padding: 0;
+
+  color: rgba(243, 246, 244, 0.65);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.footer-link:hover {
+  color: #fff;
+  transform: translateX(2px);
+}
+
+/* Footer Bottom */
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  padding: 20px 24px;
+
+  border-top: 1px solid rgba(243, 246, 244, 0.14);
+
+  color: rgba(243, 246, 244, 0.5);
+  font-size: 12.5px;
+}
+
+/* Legal Links */
+.footer-bottom-links {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.footer-bottom-links button {
+  background: none;
+  border: none;
+  padding: 0;
+
+  color: rgba(243, 246, 244, 0.5);
+  font-size: 12.5px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition: color 0.15s ease;
+}
+
+.footer-bottom-links button:hover {
+  color: #fff;
+}
+
+/* ---------- RESPONSIVE ---------- */
+
+@media (max-width: 860px) {
+  .footer-top {
+    grid-template-columns: 1fr 1fr;
+    gap: 36px 32px;
+  }
+
+  .footer-brand {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .site-footer {
+    margin-top: 40px;
+  }
+
+  .footer-top {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 40px 16px 32px;
+  }
+
+  .footer-brand {
+    grid-column: auto;
+  }
+
+  .footer-logo {
+    height: 38px;
+  }
+
+  .footer-tagline {
+    max-width: 40ch;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 18px 16px;
+  }
+
+  .footer-bottom-links {
+    gap: 16px;
+  }
+}
       }
 
       @media (max-width: 400px) {
@@ -457,55 +618,103 @@ function SiteNav({ page, onNavigate }) {
 }
 
 function SiteFooter({ onNavigate }) {
+  const currentYear = new Date().getFullYear();
+
+  const courseLinks = [
+    { label: "Programming & Python", page: "home" },
+    { label: "AI & Smart Technology", page: "home" },
+    { label: "Canva & Creative Design", page: "home" },
+    { label: "English Communication", page: "home" },
+    { label: "Scratch & Game Development", page: "home" },
+  ];
+
+  const getStartedLinks = [
+    { label: "Book a Course", page: "booking" },
+    { label: "Find Your Level", page: "level-test" },
+    { label: "Sessions", page: "sessions" },
+    { label: "Instructors", page: "instructors" },
+  ];
+
+  const companyLinks = [
+    { label: "Apply to Teach", page: "apply" },
+    { label: "About Us", page: "home" },
+    { label: "Contact", page: "home" },
+    { label: "Privacy Policy", page: "home" },
+  ];
+
+  const legalLinks = [
+    { label: "Terms", page: "home" },
+    { label: "Privacy", page: "home" },
+    { label: "Cookies", page: "home" },
+  ];
+
+  const renderLinks = (links) =>
+    links.map(({ label, page }) => (
+      <button
+        key={label}
+        type="button"
+        className="footer-link"
+        onClick={() => onNavigate(page)}
+      >
+        {label}
+      </button>
+    ));
+
   return (
     <footer className="site-footer">
       <div className="wrap footer-top">
+        {/* Brand */}
         <div className="footer-brand">
-          <img src={LOGO_SRC} alt="Bright Path" className="footer-logo" />
+          <button
+            type="button"
+            className="footer-brand-link"
+            onClick={() => onNavigate("home")}
+            aria-label="Go to Bright Path home"
+          >
+            <img
+              src={LOGO_SRC}
+              alt="Bright Path"
+              className="footer-logo"
+            />
+          </button>
+
           <p className="footer-tagline">
-            Live, online courses in code, AI, design and communication —
-            for students aged 6 to 18.
+            Live, online courses in coding, AI, design, and communication
+            for students aged 6–18.
           </p>
         </div>
 
-        <div className="footer-col">
-          <h5>Courses</h5>
-          <button onClick={() => onNavigate("home")}>Programming &amp; Python</button>
-          <button onClick={() => onNavigate("home")}>AI &amp; Smart Technology</button>
-          <button onClick={() => onNavigate("home")}>Canva &amp; Creative Design</button>
-          <button onClick={() => onNavigate("home")}>English Communication</button>
-          <button onClick={() => onNavigate("home")}>Scratch &amp; Game Development</button>
-        </div>
+        {/* Courses */}
+        <nav className="footer-col" aria-labelledby="footer-courses">
+          <h5 id="footer-courses">Courses</h5>
+          {renderLinks(courseLinks)}
+        </nav>
 
-        <div className="footer-col">
-          <h5>Get started</h5>
-          <button onClick={() => onNavigate("booking")}>Book a course</button>
-          <button onClick={() => onNavigate("level-test")}>Find your level</button>
-          <button onClick={() => onNavigate("sessions")}>Sessions</button>
-          <button onClick={() => onNavigate("instructors")}>Instructors</button>
-        </div>
+        {/* Get Started */}
+        <nav className="footer-col" aria-labelledby="footer-get-started">
+          <h5 id="footer-get-started">Get Started</h5>
+          {renderLinks(getStartedLinks)}
+        </nav>
 
-        <div className="footer-col">
-          <h5>Company</h5>
-          <button onClick={() => onNavigate("apply")}>Apply to teach</button>
-          <button onClick={() => onNavigate("home")}>About us</button>
-          <button onClick={() => onNavigate("home")}>Contact</button>
-          <button onClick={() => onNavigate("home")}>Privacy policy</button>
-        </div>
+        {/* Company */}
+        <nav className="footer-col" aria-labelledby="footer-company">
+          <h5 id="footer-company">Company</h5>
+          {renderLinks(companyLinks)}
+        </nav>
       </div>
 
       <div className="wrap footer-bottom">
-        <span>© {new Date().getFullYear()} Bright Path. All rights reserved.</span>
-        <span className="footer-bottom-links">
-          <button onClick={() => onNavigate("home")}>Terms</button>
-          <button onClick={() => onNavigate("home")}>Privacy</button>
-          <button onClick={() => onNavigate("home")}>Cookies</button>
+        <span>
+          © {currentYear} Bright Path. All rights reserved.
         </span>
+
+        <nav className="footer-bottom-links" aria-label="Legal links">
+          {renderLinks(legalLinks)}
+        </nav>
       </div>
     </footer>
   );
 }
-
 /* ============================================================================
    HOME PAGE
    ============================================================================ */
