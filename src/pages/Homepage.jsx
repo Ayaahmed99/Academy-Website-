@@ -371,10 +371,353 @@ function GlobalStyles() {
               /* ---------- FOOTER ---------- */
       /* ---------- FOOTER ---------- */
 
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
 .site-footer {
-  background: var(--ink);
-  color: rgba(243, 246, 244, 0.72);
-  margin-top: 60px;
+  background: #f7f8f7;
+  margin-top: 80px;
+  color: #374151;
+}
+
+.footer-container {
+  width: min(1180px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+/* ---------- Main Grid ---------- */
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 2fr;
+  gap: 60px;
+  padding: 72px 0 60px;
+}
+
+/* ---------- Brand ---------- */
+
+.footer-brand-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.footer-brand-link {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.footer-logo {
+  width: auto;
+  height: 42px;
+  display: block;
+}
+
+.footer-description {
+  max-width: 390px;
+  margin: 24px 0 0;
+
+  color: #6b7280;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* ---------- Social Icons ---------- */
+
+.footer-socials {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.social-icon {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #1f2937;
+  color: #fff;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  text-decoration: none;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.social-icon:hover {
+  background: #0E6E66;
+  transform: translateY(-2px);
+}
+
+/* ---------- Footer Sections ---------- */
+
+.footer-section h5,
+.footer-newsletter h5 {
+  margin: 0;
+
+  color: #9ca3af;
+
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.footer-section button {
+  background: none;
+  border: none;
+  padding: 0;
+
+  color: #374151;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+  text-align: left;
+
+  transition: color 0.2s ease;
+}
+
+.footer-section button:hover {
+  color: #0E6E66;
+}
+
+/* ---------- Newsletter ---------- */
+
+.footer-newsletter {
+  padding-left: 20px;
+}
+
+.footer-newsletter > p {
+  max-width: 360px;
+
+  margin: 18px 0 0;
+
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.footer-newsletter form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  margin-top: 20px;
+}
+
+.footer-newsletter input {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 14px 16px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+
+  background: #fff;
+
+  color: #111827;
+  font-family: inherit;
+  font-size: 14px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.footer-newsletter input::placeholder {
+  color: #9ca3af;
+}
+
+.footer-newsletter input:focus {
+  border-color: #0E6E66;
+  box-shadow: 0 0 0 2px rgba(14, 110, 102, 0.1);
+}
+
+.footer-newsletter button {
+  align-self: flex-start;
+
+  padding: 13px 22px;
+
+  border: none;
+  border-radius: 6px;
+
+  background: #0E6E66;
+  color: #fff;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.footer-newsletter button:hover {
+  background: #095a54;
+  transform: translateY(-1px);
+}
+
+/* ---------- Bottom ---------- */
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 20px;
+
+  padding: 24px 0;
+
+  border-top: 1px solid #e5e7eb;
+}
+
+.footer-bottom p {
+  margin: 0;
+
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.footer-legal {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.footer-legal button {
+  padding: 0;
+
+  border: none;
+  background: none;
+
+  color: #6b7280;
+
+  font-family: inherit;
+  font-size: 13px;
+
+  cursor: pointer;
+
+  transition: color 0.2s ease;
+}
+
+.footer-legal button:hover {
+  color: #0E6E66;
+}
+
+/* ---------- Accessibility ---------- */
+
+.footer-brand-link:focus-visible,
+.social-icon:focus-visible,
+.footer-section button:focus-visible,
+.footer-newsletter input:focus-visible,
+.footer-newsletter button:focus-visible,
+.footer-legal button:focus-visible {
+  outline: 2px solid #0E6E66;
+  outline-offset: 3px;
+}
+
+/* ---------- Tablet ---------- */
+
+@media (max-width: 900px) {
+  .footer-grid {
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: 45px 35px;
+  }
+
+  .footer-brand-section {
+    grid-column: 1 / -1;
+  }
+
+  .footer-newsletter {
+    padding-left: 0;
+  }
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 600px) {
+  .site-footer {
+    margin-top: 50px;
+  }
+
+  .footer-container {
+    width: min(100% - 32px, 500px);
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px 25px;
+
+    padding: 50px 0 40px;
+  }
+
+  .footer-brand-section {
+    grid-column: 1 / -1;
+  }
+
+  .footer-newsletter {
+    grid-column: 1 / -1;
+  }
+
+  .footer-description {
+    max-width: 100%;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+
+    padding: 20px 0;
+  }
+
+  .footer-legal {
+    gap: 18px;
+  }
+}
+
+@media (max-width: 400px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-brand-section,
+  .footer-newsletter {
+    grid-column: auto;
+  }
 }
 
 /* Footer Layout */
@@ -621,17 +964,6 @@ function SiteFooter({ onNavigate }) {
   const [email, setEmail] = useState("");
   const currentYear = new Date().getFullYear();
 
-  const handleSubscribe = (e) => {
-    e.preventDefault();
-
-    if (!email.trim()) return;
-
-    // Add your newsletter API / backend here
-    console.log("Newsletter subscription:", email);
-
-    setEmail("");
-  };
-
   const companyLinks = [
     { label: "About Us", page: "home" },
     { label: "Courses", page: "home" },
@@ -646,130 +978,90 @@ function SiteFooter({ onNavigate }) {
     { label: "Privacy Policy", page: "home" },
   ];
 
-  return (
-    <footer className="bg-gray-50 pt-10 sm:pt-16 lg:pt-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+  const handleSubscribe = (e) => {
+    e.preventDefault();
 
-        {/* Footer Main Content */}
-        <div className="grid grid-cols-2 gap-x-12 gap-y-16 md:grid-cols-3 lg:grid-cols-6">
+    if (!email.trim()) return;
+
+    console.log("Newsletter subscription:", email);
+    setEmail("");
+  };
+
+  return (
+    <footer className="site-footer">
+      <div className="footer-container">
+
+        {/* Main Footer */}
+        <div className="footer-grid">
 
           {/* Brand */}
-          <div className="col-span-2 md:col-span-3 lg:col-span-2 lg:pr-8">
-
+          <div className="footer-brand-section">
             <button
               type="button"
+              className="footer-brand-link"
               onClick={() => onNavigate("home")}
-              className="inline-flex"
               aria-label="Go to Bright Path home"
             >
               <img
                 src={LOGO_SRC}
                 alt="Bright Path"
-                className="h-10 w-auto"
+                className="footer-logo"
               />
             </button>
 
-            <p className="mt-7 max-w-md text-base leading-relaxed text-gray-600">
+            <p className="footer-description">
               Live, online courses in coding, AI, design, and communication
               designed to help students aged 6–18 build skills for the future.
             </p>
 
             {/* Social Media */}
-            <ul className="mt-9 flex items-center space-x-3">
+            <div className="footer-socials">
 
-              {/* X / Twitter */}
-              <li>
-                <a
-                  href="#"
-                  aria-label="Bright Path on X"
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-800 text-white transition-all duration-200 hover:bg-[#0E6E66] focus:bg-[#0E6E66] focus:outline-none focus:ring-2 focus:ring-[#0E6E66] focus:ring-offset-2"
-                >
-                  <svg
-                    className="h-4 w-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817-5.964 6.817H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                  </svg>
-                </a>
-              </li>
+              <a
+                href="#"
+                aria-label="Bright Path on X"
+                className="social-icon"
+              >
+                𝕏
+              </a>
 
-              {/* Facebook */}
-              <li>
-                <a
-                  href="#"
-                  aria-label="Bright Path on Facebook"
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-800 text-white transition-all duration-200 hover:bg-[#0E6E66] focus:bg-[#0E6E66] focus:outline-none focus:ring-2 focus:ring-[#0E6E66] focus:ring-offset-2"
-                >
-                  <svg
-                    className="h-4 w-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M13.397 20.997v-8.196h2.765l.411-3.209h-3.176V7.548c0-.926.258-1.56 1.587-1.56h1.684V3.127A22.336 22.336 0 0 0 14.201 3c-2.444 0-4.122 1.492-4.122 4.231v2.355H7.332v3.209h2.753v8.202h3.312z" />
-                  </svg>
-                </a>
-              </li>
+              <a
+                href="#"
+                aria-label="Bright Path on Facebook"
+                className="social-icon"
+              >
+                f
+              </a>
 
-              {/* Instagram */}
-              <li>
-                <a
-                  href="#"
-                  aria-label="Bright Path on Instagram"
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-800 text-white transition-all duration-200 hover:bg-[#0E6E66] focus:bg-[#0E6E66] focus:outline-none focus:ring-2 focus:ring-[#0E6E66] focus:ring-offset-2"
-                >
-                  <svg
-                    className="h-4 w-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M12 7.377a4.623 4.623 0 1 0 0 9.246 4.623 4.623 0 0 0 0-9.246zm0 7.627a3.004 3.004 0 1 1 0-6.008 3.004 3.004 0 0 1 0 6.008z" />
-                    <circle cx="16.806" cy="7.207" r="1.078" />
-                    <path d="M20.533 6.111A4.605 4.605 0 0 0 17.9 3.479a6.606 6.606 0 0 0-2.186-.42C14.751 3.017 14.446 3.005 12 3.005s-2.755 0-3.71.054a6.554 6.554 0 0 0-2.184.42 4.6 4.6 0 0 0-2.633 2.632 6.585 6.585 0 0 0-.419 2.186C3.011 9.26 3 9.565 3 12s.011 2.755.054 3.71c.015.748.156 1.486.419 2.187a4.61 4.61 0 0 0 2.634 2.632 6.584 6.584 0 0 0 2.185.45c.963.042 1.268.055 3.71.055s2.755 0 3.71-.055a6.615 6.615 0 0 0 2.186-.419 4.613 4.613 0 0 0 2.633-2.633c.263-.7.404-1.438.419-2.186.043-.962.056-1.267.056-3.71s0-2.753-.056-3.71a6.581 6.581 0 0 0-.421-2.217z" />
-                  </svg>
-                </a>
-              </li>
+              <a
+                href="#"
+                aria-label="Bright Path on Instagram"
+                className="social-icon"
+              >
+                ◎
+              </a>
 
-              {/* GitHub */}
-              <li>
-                <a
-                  href="#"
-                  aria-label="Bright Path on GitHub"
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-800 text-white transition-all duration-200 hover:bg-[#0E6E66] focus:bg-[#0E6E66] focus:outline-none focus:ring-2 focus:ring-[#0E6E66] focus:ring-offset-2"
-                >
-                  <svg
-                    className="h-4 w-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M12.026 2c-5.509 0-9.974 4.465-9.974 9.974 0 4.406 2.857 8.145 6.821 9.465.499.09.679-.217.679-.481 0-.237-.008-.865-.011-1.696-2.775.602-3.361-1.338-3.361-1.338-.452-1.152-1.107-1.459-1.107-1.459-.905-.619.069-.605.069-.605 1.002.07 1.527 1.028 1.527 1.028.89 1.524 2.336 1.084 2.902.829.091-.645.351-1.085.635-1.334-2.214-.251-4.542-1.107-4.542-4.93 0-1.087.389-1.979 1.024-2.675-.101-.253-.446-1.268.099-2.64 0 0 .837-.269 2.742 1.021a9.582 9.582 0 0 1 2.496-.336 9.554 9.554 0 0 1 2.496.336c1.906-1.291 2.742-1.021 2.742-1.021.545 1.372.203 2.387.099 2.64.64.696 1.024 1.587 1.024 2.675 0 3.833-2.33 4.675-4.552 4.922.355.308.675.916.675 1.846 0 1.334-.012 2.41-.012 2.737 0 .267.178.577.687.479C19.146 20.115 22 16.379 22 11.974 22 6.465 17.535 2 12.026 2z"
-                    />
-                  </svg>
-                </a>
-              </li>
-            </ul>
+              <a
+                href="#"
+                aria-label="Bright Path on GitHub"
+                className="social-icon"
+              >
+                ◇
+              </a>
+
+            </div>
           </div>
 
           {/* Company */}
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-widest text-gray-400">
-              Company
-            </p>
+          <div className="footer-section">
+            <h5>Company</h5>
 
-            <ul className="mt-6 space-y-4">
+            <ul>
               {companyLinks.map(({ label, page }) => (
                 <li key={label}>
                   <button
                     type="button"
                     onClick={() => onNavigate(page)}
-                    className="text-left text-base text-gray-700 transition-all duration-200 hover:text-[#0E6E66] focus:text-[#0E6E66] focus:outline-none"
                   >
                     {label}
                   </button>
@@ -779,18 +1071,15 @@ function SiteFooter({ onNavigate }) {
           </div>
 
           {/* Help */}
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-widest text-gray-400">
-              Help
-            </p>
+          <div className="footer-section">
+            <h5>Help</h5>
 
-            <ul className="mt-6 space-y-4">
+            <ul>
               {helpLinks.map(({ label, page }) => (
                 <li key={label}>
                   <button
                     type="button"
                     onClick={() => onNavigate(page)}
-                    className="text-left text-base text-gray-700 transition-all duration-200 hover:text-[#0E6E66] focus:text-[#0E6E66] focus:outline-none"
                   >
                     {label}
                   </button>
@@ -800,76 +1089,54 @@ function SiteFooter({ onNavigate }) {
           </div>
 
           {/* Newsletter */}
-          <div className="col-span-2 md:col-span-1 lg:col-span-2 lg:pl-8">
-            <p className="text-sm font-semibold uppercase tracking-widest text-gray-400">
-              Subscribe to Newsletter
+          <div className="footer-newsletter">
+            <h5>Subscribe to Newsletter</h5>
+
+            <p>
+              Get updates about new courses, sessions, and opportunities
+              at Bright Path.
             </p>
 
-            <p className="mt-4 text-sm leading-relaxed text-gray-500">
-              Get updates about new courses, sessions, and opportunities at
-              Bright Path.
-            </p>
-
-            <form onSubmit={handleSubscribe} className="mt-6">
-              <label htmlFor="footer-email" className="sr-only">
-                Email address
-              </label>
-
+            <form onSubmit={handleSubscribe}>
               <input
                 type="email"
-                id="footer-email"
-                name="email"
+                placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
                 required
-                className="block w-full rounded-md border border-gray-200 bg-white p-4 text-black placeholder-gray-500 transition-all duration-200 caret-[#0E6E66] focus:border-[#0E6E66] focus:outline-none focus:ring-1 focus:ring-[#0E6E66]"
               />
 
-              <button
-                type="submit"
-                className="mt-3 inline-flex items-center justify-center rounded-md bg-[#0E6E66] px-6 py-4 font-semibold text-white transition-all duration-200 hover:bg-[#095A54] focus:bg-[#095A54] focus:outline-none focus:ring-2 focus:ring-[#0E6E66] focus:ring-offset-2"
-              >
+              <button type="submit">
                 Subscribe
               </button>
             </form>
           </div>
+
         </div>
 
         {/* Bottom */}
-        <hr className="mt-16 border-gray-200" />
+        <div className="footer-bottom">
 
-        <div className="flex flex-col items-center justify-between gap-4 py-8 text-sm text-gray-500 sm:flex-row">
           <p>
             © {currentYear} Bright Path. All rights reserved.
           </p>
 
-          <div className="flex items-center gap-6">
-            <button
-              type="button"
-              onClick={() => onNavigate("home")}
-              className="transition-colors hover:text-[#0E6E66]"
-            >
+          <div className="footer-legal">
+            <button onClick={() => onNavigate("home")}>
               Terms
             </button>
 
-            <button
-              type="button"
-              onClick={() => onNavigate("home")}
-              className="transition-colors hover:text-[#0E6E66]"
-            >
+            <button onClick={() => onNavigate("home")}>
               Privacy
             </button>
 
-            <button
-              type="button"
-              onClick={() => onNavigate("home")}
-              className="transition-colors hover:text-[#0E6E66]"
-            >
+            <button onClick={() => onNavigate("home")}>
               Cookies
             </button>
           </div>
+
         </div>
+
       </div>
     </footer>
   );
