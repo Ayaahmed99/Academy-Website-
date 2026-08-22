@@ -9,7 +9,7 @@ import ApplicationForm from "./pages/Application_Form.jsx";
 import Instructors from "./pages/Instructors.jsx";
 import LevelTest from "./pages/Level_Test.jsx";
 import Sessions from "./pages/Sessions.jsx";
-import BookingPage from "./pages/Booking_Page.jsx";
+import BookingPage from "./pages/Booking.jsx";
 
 export default function App() {
   return (
@@ -20,7 +20,7 @@ export default function App() {
         <Route path="/instructors" element={<Instructors />} />
         <Route path="/level-test" element={<LevelTest />} />
         <Route path="/sessions" element={<Sessions />} />
-        <Route path="/booking" element={<Booking />} />
+        <Route path="/booking" element={<BookingPage />} />
       </Routes>
     </BrowserRouter>
   );
