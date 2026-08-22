@@ -430,7 +430,6 @@ function SiteFooter({ onNavigate }) {
         <button onClick={() => onNavigate("instructors")}>Instructors</button>
         <button onClick={() => onNavigate("level-test")}>Find your level</button>
         <button onClick={() => onNavigate("sessions")}>Sessions</button>
-        <button onClick={() => onNavigate("booking")}>Book a course</button>
         <button onClick={() => onNavigate("apply")}>Apply to teach</button>
       </div>
     </footer>
