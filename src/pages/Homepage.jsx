@@ -978,15 +978,18 @@ function SiteFooter({ onNavigate }) {
     { label: "Privacy Policy", page: "home" },
   ];
 
-<form onSubmit={handleSubscribe}>
+  function handleSubscribe(event) {
+    event.preventDefault();
+    if (!email.trim()) return;
+    console.log("Subscribe:", email);
+    setEmail("");
+  }
 
   return (
     <footer className="site-footer">
       <div className="footer-container">
-
         {/* Main Footer */}
         <div className="footer-grid">
-
           {/* Brand */}
           <div className="footer-brand-section">
             <button
@@ -1001,23 +1004,15 @@ function SiteFooter({ onNavigate }) {
                 className="footer-logo"
               />
             </button>
-
             <p className="footer-description">
               Live, online courses in coding, AI, design, and communication
               designed to help students aged 6–18 build skills for the future.
             </p>
-
             {/* Social Media */}
             <div className="footer-socials">
-
-              <a
-                href="#"
-                aria-label="Bright Path on X"
-                className="social-icon"
-              >
+              <a href="#" aria-label="Bright Path on X" className="social-icon">
                 𝕏
               </a>
-
               <a
                 href="https://web.facebook.com/profile.php?id=61593361842100"
                 aria-label="Bright Path on Facebook"
@@ -1025,37 +1020,22 @@ function SiteFooter({ onNavigate }) {
               >
                 f
               </a>
-
-              <a
-                href="#"
-                aria-label="Bright Path on Instagram"
-                className="social-icon"
-              >
+              <a href="#" aria-label="Bright Path on Instagram" className="social-icon">
                 ◎
               </a>
-
-              <a
-                href="#"
-                aria-label="Bright Path on GitHub"
-                className="social-icon"
-              >
+              <a href="#" aria-label="Bright Path on GitHub" className="social-icon">
                 ◇
               </a>
-
             </div>
           </div>
 
           {/* Company */}
           <div className="footer-section">
             <h5>Company</h5>
-
             <ul>
               {companyLinks.map(({ label, page }) => (
                 <li key={label}>
-                  <button
-                    type="button"
-                    onClick={() => onNavigate(page)}
-                  >
+                  <button type="button" onClick={() => onNavigate(page)}>
                     {label}
                   </button>
                 </li>
@@ -1066,14 +1046,10 @@ function SiteFooter({ onNavigate }) {
           {/* Help */}
           <div className="footer-section">
             <h5>Help</h5>
-
             <ul>
               {helpLinks.map(({ label, page }) => (
                 <li key={label}>
-                  <button
-                    type="button"
-                    onClick={() => onNavigate(page)}
-                  >
+                  <button type="button" onClick={() => onNavigate(page)}>
                     {label}
                   </button>
                 </li>
@@ -1084,21 +1060,10 @@ function SiteFooter({ onNavigate }) {
           {/* Newsletter */}
           <div className="footer-newsletter">
             <h5>Subscribe to Newsletter</h5>
-
             <p>
-              Get updates about new courses, sessions, and opportunities
-              at Bright Path.
+              Get updates about new courses, sessions, and opportunities at Bright Path.
             </p>
-
-           function handleSubscribe(event) {
-  event.preventDefault();
-
-  if (!email.trim()) return;
-
-  console.log("Subscribe:", email);
-
-  setEmail("");
-}
+            <form onSubmit={handleSubscribe}>
               <input
                 type="email"
                 placeholder="Enter your email"
@@ -1106,38 +1071,20 @@ function SiteFooter({ onNavigate }) {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-
-              <button type="submit">
-                Subscribe
-              </button>
+              <button type="submit">Subscribe</button>
             </form>
           </div>
-
         </div>
 
         {/* Bottom */}
         <div className="footer-bottom">
-
-          <p>
-            © {currentYear} Bright Path. All rights reserved.
-          </p>
-
+          <p>© {currentYear} Bright Path. All rights reserved.</p>
           <div className="footer-legal">
-            <button onClick={() => onNavigate("home")}>
-              Terms
-            </button>
-
-            <button onClick={() => onNavigate("home")}>
-              Privacy
-            </button>
-
-            <button onClick={() => onNavigate("home")}>
-              Cookies
-            </button>
+            <button onClick={() => onNavigate("home")}>Terms</button>
+            <button onClick={() => onNavigate("home")}>Privacy</button>
+            <button onClick={() => onNavigate("home")}>Cookies</button>
           </div>
-
         </div>
-
       </div>
     </footer>
   );
