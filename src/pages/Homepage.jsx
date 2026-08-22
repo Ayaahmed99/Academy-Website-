@@ -1026,7 +1026,7 @@ function SiteFooter({ onNavigate }) {
               </a>
 
               <a
-                href="#"
+                href="https://web.facebook.com/profile.php?id=61593361842100"
                 aria-label="Bright Path on Facebook"
                 className="social-icon"
               >
