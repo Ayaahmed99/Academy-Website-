@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { X, ArrowRight, Clock, Users, Wifi, Check, Home as HomeIcon } from "lucide-react";
 
-// The other three pages were already built as their own self-contained
+// The other pages were already built as their own self-contained
 // components (each ships its own <nav>, styles, and design tokens) — we
 // just import and route to them here instead of re-writing their logic.
 import ApplyPage from "./Application_Form";
 import InstructorsPage from "./Instructors";
 import LevelTestPage from "./Level_Test";
 import SessionsPage from "./Sessions";
+import BookingPage from "./Booking";
 
 /* ============================================================================
    HOME PAGE DATA
@@ -273,9 +274,9 @@ function GlobalStyles() {
       .why-item h4 { font-size: 16px; margin-top: 8px; }
       .why-item p { margin-top: 6px; font-size: 14px; color: var(--ink-soft); }
 
-      /* Promo band linking to Instructors / Apply / Level-test pages */
-      .promo-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding-bottom: 70px; }
-      @media (max-width: 920px) { .promo-strip { grid-template-columns: 1fr 1fr; } }
+      /* Promo band linking to Instructors / Apply / Level-test / Booking pages */
+      .promo-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding-bottom: 70px; }
+      @media (max-width: 1040px) { .promo-strip { grid-template-columns: 1fr 1fr; } }
       @media (max-width: 620px) { .promo-strip { grid-template-columns: 1fr; } }
       .promo-card {
         background: var(--paper-raised); border: 1px solid var(--line); border-radius: 14px; padding: 26px;
@@ -334,7 +335,7 @@ function GlobalStyles() {
 }
 
 /* ============================================================================
-   SHARED NAV (home page only — the other three pages carry their own)
+   SHARED NAV (home page only — the other pages carry their own)
    ============================================================================ */
 
 const PAGES = [
@@ -342,6 +343,7 @@ const PAGES = [
   { id: "instructors", label: "Instructors" },
   { id: "level-test", label: "Find your level" },
   { id: "sessions", label: "Sessions" },
+  { id: "booking", label: "Book a course" },
   { id: "apply", label: "Apply to teach" },
 ];
 
@@ -365,8 +367,8 @@ function SiteNav({ page, onNavigate }) {
             </button>
           ))}
         </div>
-        <button className="nav-cta" onClick={() => onNavigate("apply")}>
-          Apply to teach
+        <button className="nav-cta" onClick={() => onNavigate("booking")}>
+          Book a course
         </button>
       </div>
     </nav>
@@ -382,6 +384,7 @@ function SiteFooter({ onNavigate }) {
         <button onClick={() => onNavigate("instructors")}>Instructors</button>
         <button onClick={() => onNavigate("level-test")}>Find your level</button>
         <button onClick={() => onNavigate("sessions")}>Sessions</button>
+        <button onClick={() => onNavigate("booking")}>Book a course</button>
         <button onClick={() => onNavigate("apply")}>Apply to teach</button>
       </div>
     </footer>
@@ -488,7 +491,7 @@ function CourseCard({ course, onExplore }) {
   );
 }
 
-function CourseDetail({ course, onClose }) {
+function CourseDetail({ course, onClose, onNavigate }) {
   useEffect(() => {
     function onKey(e) {
       if (e.key === "Escape") onClose();
@@ -550,7 +553,9 @@ function CourseDetail({ course, onClose }) {
               ))}
             </div>
 
-            <button className="cta-btn full">Enroll in this course</button>
+            <button className="cta-btn full" onClick={() => onNavigate("booking")}>
+              Enroll in this course
+            </button>
           </>
         ) : (
           <>
@@ -563,7 +568,9 @@ function CourseDetail({ course, onClose }) {
             <p className="soon-note">
               This course is still in the works — curriculum details above are a sneak peek and may change before launch.
             </p>
-            <button className="cta-btn full outline">Notify me when it opens</button>
+            <button className="cta-btn full outline" onClick={() => onNavigate("booking")}>
+              Join the waitlist
+            </button>
           </>
         )}
       </div>
@@ -588,8 +595,8 @@ function HomePage({ onNavigate }) {
             sessions, real projects, and small groups.
           </p>
           <div className="hero-ctas">
-            <button className="cta-btn" onClick={() => document.getElementById("courses")?.scrollIntoView({ behavior: "smooth" })}>
-              Browse courses <ArrowRight size={16} />
+            <button className="cta-btn" onClick={() => onNavigate("booking")}>
+              Book a course <ArrowRight size={16} />
             </button>
             <button className="cta-secondary" onClick={() => onNavigate("level-test")}>Find your level</button>
           </div>
@@ -645,6 +652,13 @@ function HomePage({ onNavigate }) {
           <h2>A few more things to check out</h2>
         </div>
         <div className="promo-strip">
+          <div className="promo-card" style={{ "--accent": "var(--teal)" }}>
+            <h3>Ready to enroll?</h3>
+            <p>Book a spot for your child in a couple of minutes — no payment needed, we'll contact you to confirm.</p>
+            <button className="cta-btn outline" onClick={() => onNavigate("booking")}>
+              Book a course <ArrowRight size={16} />
+            </button>
+          </div>
           <div className="promo-card" style={{ "--accent": "var(--amber)" }}>
             <h3>Not sure where to start?</h3>
             <p>Take a 2-minute level check for any course and we'll tell you exactly where to begin.</p>
@@ -669,15 +683,15 @@ function HomePage({ onNavigate }) {
         </div>
       </section>
 
-      {active && <CourseDetail course={active} onClose={() => setActive(null)} />}
+      {active && <CourseDetail course={active} onClose={() => setActive(null)} onNavigate={onNavigate} />}
     </>
   );
 }
 
 /* ============================================================================
    ROOT APP — owns the current page and passes navigation down.
-   Instructors, Level test, and Apply are rendered from the separately-built
-   files; only Home lives here.
+   Instructors, Level test, Sessions, Apply, and Booking are rendered from
+   the separately-built files; only Home lives here.
    ============================================================================ */
 
 export default function App() {
@@ -710,6 +724,7 @@ export default function App() {
           {page === "instructors" && <InstructorsPage />}
           {page === "level-test" && <LevelTestPage />}
           {page === "sessions" && <SessionsPage />}
+          {page === "booking" && <BookingPage />}
           {page === "apply" && <ApplyPage />}
         </>
       )}
