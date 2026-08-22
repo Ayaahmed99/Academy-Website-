@@ -1097,7 +1097,15 @@ function SiteFooter({ onNavigate }) {
               at Bright Path.
             </p>
 
-            <form onSubmit={handleSubscribe}>
+           function handleSubscribe(event) {
+  event.preventDefault();
+
+  if (!email.trim()) return;
+
+  console.log("Subscribe:", email);
+
+  setEmail("");
+}
               <input
                 type="email"
                 placeholder="Enter your email"
